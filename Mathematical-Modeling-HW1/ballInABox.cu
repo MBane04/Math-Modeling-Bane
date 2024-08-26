@@ -143,40 +143,35 @@ void getForces()
 	Force.x = 0.0;
 	Force.y = 0.0;
 	Force.z = 0.0;
+	float a = 100.0;
 	float sphereRadius = SphereDiameter/2.0;
-	//create a random number generator seeded with the time
-	curandState_t state;
-	curand_init((unsigned long long)clock() + (unsigned long long)time(NULL), 0, 0, &state);
-
-	//random number between -1 and 1
-	float random = curand_uniform(&state) * 2 - 1;
 
 	if(Position.x + sphereRadius > 2.5)
 	{
-		Force.x = -100.0*SphereMass * random;
+		Force.x = -a*SphereMass;
 
 	}
 	else if(Position.x - sphereRadius < -2.5)
 	{
-		Force.x = 100.0*SphereMass* random;
+		Force.x = a*SphereMass;
 	}
 
 	if(Position.y + sphereRadius > 2.5)
 	{
-		Force.y = -1000.0*SphereMass* random;
+		Force.y = -a*SphereMass;
 	}
 	else if(Position.y - sphereRadius < -2.5)
 	{
-		Force.y = 100.0*SphereMass* random;
+		Force.y = a*SphereMass;
 	}
 
 	if(Position.z + sphereRadius > 2.5)
 	{
-		Force.z = -10.0*SphereMass* random;
+		Force.z = -a*SphereMass;
 	}
 	else if(Position.z - sphereRadius < -2.5)
 	{
-		Force.z = 100.0*SphereMass*	random;
+		Force.z = a*SphereMass;
 	}
 
 
