@@ -146,30 +146,30 @@ void getForces()
 	float a = 100.0;
 	float sphereRadius = SphereDiameter/2.0;
 
-	if(Position.x + sphereRadius > 2.5)
+	if(Position.x + sphereRadius > BoxSideLength/2.0)
 	{
 		Force.x = -a*SphereMass;
 
 	}
-	else if(Position.x - sphereRadius < -2.5)
+	else if(Position.x - sphereRadius < -BoxSideLength/2.0)
 	{
 		Force.x = a*SphereMass;
 	}
 
-	if(Position.y + sphereRadius > 2.5)
+	if(Position.y + sphereRadius > BoxSideLength/2.0)
 	{
 		Force.y = -a*SphereMass;
 	}
-	else if(Position.y - sphereRadius < -2.5)
+	else if(Position.y - sphereRadius < -BoxSideLength/2.0)
 	{
 		Force.y = a*SphereMass;
 	}
 
-	if(Position.z + sphereRadius > 2.5)
+	if(Position.z + sphereRadius > BoxSideLength/2.0)
 	{
 		Force.z = -a*SphereMass;
 	}
-	else if(Position.z - sphereRadius < -2.5)
+	else if(Position.z - sphereRadius < -BoxSideLength/2.0)
 	{
 		Force.z = a*SphereMass;
 	}
