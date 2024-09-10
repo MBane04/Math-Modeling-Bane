@@ -1,5 +1,7 @@
 //nvcc AsteriodsLocalDampingBroken.cu -o bounce -lglut -lm -lGLU -lGL																													
 //To stop hit "control c" in the window you launched it from.
+
+testing pull
 #include <iostream>
 #include <fstream>
 #include <sstream>
