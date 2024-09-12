@@ -202,7 +202,7 @@ void setInitailConditions()
 	// so you will need a local variable call it maxSphereSize and two other local variables
 	// call them angle1 and angle2.
 
-	float randomSphereSize = ((float)rand()/(float)RAND_MAX)*20.0 - 10.0;
+	float randomSphereSize = ((float)rand()/(float)RAND_MAX)*30.0 - 25.0;
 	float maxSphereSize = randomSphereSize;
 	float angle1, angle2;
 	
@@ -421,12 +421,13 @@ void getForces()
 			// Also check and see if the seperation is less than the radius. SOLVED
 			// If it is print out a note to make your repultion stronger and termenate the program.SOLVED
 
-			inOut = dx*dvx + dy*dvy + dz*dvz;
-			kSphereReduction = 1.1;
+			
+			kSphereReduction = 1.5;
 			kSphere = 1000.0;
 			dvx = Velocity[j].x - Velocity[i].x;
 			dvy = Velocity[j].y - Velocity[i].y;
 			dvz = Velocity[j].z - Velocity[i].z;
+			inOut = dx*dvx + dy*dvy + dz*dvz;
 			
 
 			if(d < SphereDiameter)
@@ -439,19 +440,16 @@ void getForces()
 					exit(0);
 				}
 				magnitude = kSphere*(SphereDiameter - d);
-				float dampingx = kSphereReduction*Velocity[i].x;
-				float dampingy = kSphereReduction*Velocity[i].y;	
-				float dampingz = kSphereReduction*Velocity[i].z;
 
 				// Doling out the force in the proper perfortions using unit vectors.
 				//now to add a kSphereReduction*inOut force to work against the inelastic collision
-				Force[i].x -= magnitude*(dx/d) + dampingx;
-				Force[i].y -= magnitude*(dy/d) + dampingy;
-				Force[i].z -= magnitude*(dz/d) + dampingz;
+				Force[i].x -= magnitude*(dx/d) + kSphereReduction *inOut;
+				Force[i].y -= magnitude*(dy/d) + kSphereReduction*inOut;
+				Force[i].z -= magnitude*(dz/d) + kSphereReduction*inOut;
 				// A force on me causes the opposite force on you. 
-				Force[j].x += magnitude*(dx/d) - dampingx;
-				Force[j].y += magnitude*(dy/d) - dampingy;
-				Force[j].z += magnitude*(dz/d) - dampingz;
+				Force[j].x += magnitude*(dx/d) - kSphereReduction*inOut;
+				Force[j].y += magnitude*(dy/d) - kSphereReduction*inOut;
+				Force[j].z += magnitude*(dz/d) - kSphereReduction*inOut;
 				printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!THE SPHERES %d and %d COLLIDED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n", i, j);
 
 				//inOut is the most cheeks variable i have ever the misfortune of working with
@@ -468,13 +466,9 @@ void getForces()
 
 				//AND WHAT MAKES IT WORSE IS ITS ONLY MULTIPLYING, CHECK THE FORMULA, WHAT IS THIS???????????????????
 				//I pretty much took it out cause how am I supposed to explain it when the math looks like that
-				//DR. WYATT, I AM BEGGING YOU, PLEASE NEVER DO THIS AGAIN
 
 
 				printf("inout = %f\n", inOut);
-				printf("dampingx = %f\n", dampingx);
-				printf("dampingy = %f\n", dampingy);
-				printf("dampingz = %f\n", dampingz);
 			}
 			
 			// This adds the gravity between asteroids.
@@ -519,7 +513,7 @@ void updatePositions()
 			Velocity[i].x += (Force[i].x/SphereMass)*Dt;
 			Velocity[i].y += (Force[i].y/SphereMass)*Dt;
 			Velocity[i].z += (Force[i].z/SphereMass)*Dt;
-			printf("\n Velocity[%d].x = %f", i, Velocity[i].x);
+			//printf("\n Velocity[%d].x = %f", i, Velocity[i].x);
 		}
 
 		Position[i].x += Velocity[i].x*Dt;
@@ -581,7 +575,7 @@ void terminalPrint()
 	BOLD_OFF   "\e[m"
 	*/
 	
-	//system("clear");
+	system("clear");
 	
 	// ???????????????????????????????????????? SOLVED
 	// let people know how to move left, right, up, and down.
