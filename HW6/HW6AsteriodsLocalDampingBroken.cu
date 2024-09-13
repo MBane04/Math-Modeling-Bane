@@ -103,13 +103,13 @@ void KeyPressed(unsigned char key, int x, int y)
 	// ????????????????????????????????????????????????????????????? SOLVED
 	// Add left, right, up, and down functionality to your simulation.
 	float dx = 0.05f;
-	if(key == 'x')
+	if(key == 'd')
 	{
 		glTranslatef(-dx, 0.0, 0.0);
 		drawPicture();
 		terminalPrint();
 	}
-	if(key == 'X')
+	if(key == 'a')
 	{
 		glTranslatef(dx, 0.0, 0.0);
 		drawPicture();
@@ -117,13 +117,13 @@ void KeyPressed(unsigned char key, int x, int y)
 	}
 
 	float dy = 0.05f;
-	if(key == 'y')
+	if(key == 'w')
 	{
 		glTranslatef(0.0, -dy, 0.0);
 		drawPicture();
 		terminalPrint();
 	}
-	if(key == 'Y')
+	if(key == 's')
 	{
 		glTranslatef(0.0, dy, 0.0);
 		drawPicture();
@@ -202,7 +202,7 @@ void setInitailConditions()
 	// so you will need a local variable call it maxSphereSize and two other local variables
 	// call them angle1 and angle2.
 
-	float randomSphereSize = ((float)rand()/(float)RAND_MAX)*30.0 - 25.0;
+	float randomSphereSize = ((float)rand()/(float)RAND_MAX)*20.0;
 	float maxSphereSize = randomSphereSize;
 	float angle1, angle2;
 	
@@ -422,7 +422,7 @@ void getForces()
 			// If it is print out a note to make your repultion stronger and termenate the program.SOLVED
 
 			
-			kSphereReduction = 1.5;
+			kSphereReduction = 0.3;
 			kSphere = 1000.0;
 			dvx = Velocity[j].x - Velocity[i].x;
 			dvy = Velocity[j].y - Velocity[i].y;
@@ -442,31 +442,30 @@ void getForces()
 				magnitude = kSphere*(SphereDiameter - d);
 
 				// Doling out the force in the proper perfortions using unit vectors.
-				//now to add a kSphereReduction*inOut force to work against the inelastic collision
-				Force[i].x -= magnitude*(dx/d) + kSphereReduction *inOut;
-				Force[i].y -= magnitude*(dy/d) + kSphereReduction*inOut;
-				Force[i].z -= magnitude*(dz/d) + kSphereReduction*inOut;
+				if(inOut > 0.0)
+				{
+					Force[i].x -= magnitude*(dx/d);
+					Force[i].y -= magnitude*(dy/d);
+					Force[i].z -= magnitude*(dz/d);
+
+					Force[j].x += magnitude*(dx/d);
+					Force[j].y += magnitude*(dy/d);
+					Force[j].z += magnitude*(dz/d);
+				}
+				else
+				{
+					Force[i].x -= magnitude*(dx/d)*kSphereReduction;
+					Force[i].y -= magnitude*(dy/d)*kSphereReduction;
+					Force[i].z -= magnitude*(dz/d)*kSphereReduction;
+
+					Force[j].x += magnitude*(dx/d)*kSphereReduction;
+					Force[j].y += magnitude*(dy/d)*kSphereReduction;
+					Force[j].z += magnitude*(dz/d)*kSphereReduction;
+				}
+
 				// A force on me causes the opposite force on you. 
-				Force[j].x += magnitude*(dx/d) - kSphereReduction*inOut;
-				Force[j].y += magnitude*(dy/d) - kSphereReduction*inOut;
-				Force[j].z += magnitude*(dz/d) - kSphereReduction*inOut;
+				
 				printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!THE SPHERES %d and %d COLLIDED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n", i, j);
-
-				//inOut is the most cheeks variable i have ever the misfortune of working with
-				//check this out, from the terminal
-				//dx = 0.070312
-				//dy = -0.714844
-				//dz = -0.660156
-				//dvx = 0.000000
-				//dvy = -0.500000
-				//dvz = 0.000000
-
-				//YET FOR WHATEVER GOD FORSAKEN REASON
-				//inout = -26616594432.000000
-
-				//AND WHAT MAKES IT WORSE IS ITS ONLY MULTIPLYING, CHECK THE FORMULA, WHAT IS THIS???????????????????
-				//I pretty much took it out cause how am I supposed to explain it when the math looks like that
-
 
 				printf("inout = %f\n", inOut);
 			}
