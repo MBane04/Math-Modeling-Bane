@@ -202,7 +202,7 @@ void setInitailConditions()
 	// so you will need a local variable call it maxSphereSize and two other local variables
 	// call them angle1 and angle2.
 
-	float randomSphereSize = ((float)rand()/(float)RAND_MAX)*20.0;
+	float randomSphereSize = ((float)rand()/(float)RAND_MAX)*5.0 + 5.0;
 	float maxSphereSize = randomSphereSize;
 	float angle1, angle2;
 	
@@ -212,7 +212,7 @@ void setInitailConditions()
 		test = 0;
 		while(test == 0)
 		{
-			// ????????????????????????????????????????????? SOLVED???
+			// ????????????????????????????????????????????? SOLVED
 			// Change this from a box to a sphere.
 			// Get random position.
 			angle1 = ((float)rand()/(float)RAND_MAX)*2.0*PI;
@@ -422,7 +422,7 @@ void getForces()
 			// If it is print out a note to make your repultion stronger and termenate the program.SOLVED
 
 			
-			kSphereReduction = 0.3;
+			kSphereReduction = 0.7;
 			kSphere = 1000.0;
 			dvx = Velocity[j].x - Velocity[i].x;
 			dvy = Velocity[j].y - Velocity[i].y;
@@ -444,6 +444,17 @@ void getForces()
 				// Doling out the force in the proper perfortions using unit vectors.
 				if(inOut > 0.0)
 				{
+					Force[i].x -= magnitude*(dx/d)*kSphereReduction;
+					Force[i].y -= magnitude*(dy/d)*kSphereReduction;
+					Force[i].z -= magnitude*(dz/d)*kSphereReduction;
+
+					Force[j].x += magnitude*(dx/d)*kSphereReduction;
+					Force[j].y += magnitude*(dy/d)*kSphereReduction;
+					Force[j].z += magnitude*(dz/d)*kSphereReduction;
+
+				}
+				else
+				{
 					Force[i].x -= magnitude*(dx/d);
 					Force[i].y -= magnitude*(dy/d);
 					Force[i].z -= magnitude*(dz/d);
@@ -452,22 +463,6 @@ void getForces()
 					Force[j].y += magnitude*(dy/d);
 					Force[j].z += magnitude*(dz/d);
 				}
-				else
-				{
-					Force[i].x -= magnitude*(dx/d)*kSphereReduction;
-					Force[i].y -= magnitude*(dy/d)*kSphereReduction;
-					Force[i].z -= magnitude*(dz/d)*kSphereReduction;
-
-					Force[j].x += magnitude*(dx/d)*kSphereReduction;
-					Force[j].y += magnitude*(dy/d)*kSphereReduction;
-					Force[j].z += magnitude*(dz/d)*kSphereReduction;
-				}
-
-				// A force on me causes the opposite force on you. 
-				
-				printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!THE SPHERES %d and %d COLLIDED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n", i, j);
-
-				printf("inout = %f\n", inOut);
 			}
 			
 			// This adds the gravity between asteroids.
