@@ -86,22 +86,31 @@ void KeyPressed(unsigned char key, int x, int y)
 {
 	if(key == 'k')
 	{
-		//float4 pos, vel;
-		//Pause = 1;
-		//terminalPrint();
+		float4 pos, vel;
+		Pause = 1;
+		terminalPrint();
 		// ??????????????????????????????????????????
 		// Zero out center of mass and linear velocity of the system.
-		//drawPicture();
+		pos = {0.0, 0.0, 0.0, 0.0};
+		vel = {0.0, 0.0, 0.0, 0.0};
+		drawPicture();
 		printf("\n The simulation has been zeroed out.\n");
 	}
 	
 	if(key == '1')
 	{
-		//float4 pos, vel;
-		//Pause = 1;
-		//terminalPrint();
+		float4 pos, vel;
+		Pause = 1;
+		terminalPrint();
 		// ??????????????????????????????????????????
+
+		//the functions should return both of these as float, so call them
+		pos = centerOfMass();
+		vel = linearVelocity();
+
 		//Print out center of mass and linear velocity of the system.
+		printf("\n The center of mass is: x = %f, y = %f, z = %f", pos.x, pos.y, pos.z);
+		printf("\n The linear velocity is: x = %f, y = %f, z = %f", vel.x, vel.y, vel.z);
 	}
 	
 	// Turns tracers on and off
@@ -122,26 +131,26 @@ void KeyPressed(unsigned char key, int x, int y)
 	}
 	
 	float dx = 0.05f;
-	if(key == 'x')
+	if(key == 'a')
 	{
 		glTranslatef(-dx, 0.0, 0.0);
 		drawPicture();
 		terminalPrint();
 	}
-	if(key == 'X')
+	if(key == 'd')
 	{
 		glTranslatef(dx, 0.0, 0.0);
 		drawPicture();
 	}
 	
 	float dy = 0.05f;
-	if(key == 'y')
+	if(key == 'w')
 	{
 		glTranslatef(0.0, -dy, 0.0);
 		drawPicture();
 		terminalPrint();
 	}
-	if(key == 'Y')
+	if(key == 's')
 	{
 		glTranslatef(0.0, dy, 0.0);
 		drawPicture();
@@ -281,6 +290,23 @@ void drawPicture()
 	
 	// ???????????????????????????????????????????????
 	// Draw a cool 10X10 wall centered at (25,0,0) perpendicular to the x axis.
+
+	float wallWidth = 10.0;
+	float wallHalf = wallWidth/2.0;
+	//choose a random number every time you draw the wall for the color
+	float r = (float)rand()/(float)RAND_MAX;
+	float g = (float)rand()/(float)RAND_MAX;
+	float b = (float)rand()/(float)RAND_MAX;
+
+	glColor3f(r, g, b); //the wall now has disco fever (you said you wanted a cool wall)
+	glBegin(GL_QUADS); //GL_QUADS is used to draw a quadrilateral
+		glVertex3f(25.0, wallHalf , -wallHalf);//the four corners of the 10x10 wall, im not sure why but I had to draw it in  
+		glVertex3f(25.0, wallHalf, wallHalf); //this specific order to get it to work, otherwise it looked like the Marlboro logo ¯\_(ツ)_/¯
+		glVertex3f(25.0, -wallHalf, wallHalf);
+		glVertex3f(25.0, -wallHalf, -wallHalf); //maybe cause it was drawing and connecting in a clockwise order??????
+
+	glEnd();
+	
 	
 	glutSwapBuffers();
 }
@@ -293,10 +319,25 @@ float4 centerOfMass()
 	centerOfMass.y = 0.0;
 	centerOfMass.z = 0.0;
 	
-	// ????????????????????????????????????????????????????????
+	// ???????????????????????????????????????????????????????? SOLVED?
 	// Return the center of mass of the system.
 
+	//Com = SUM(x_i * m_i)/N, since all sphere masses are 1, we can ignore the mass term
 	
+	//sum all the positions (done for us, thanks Dr. Wyatt)
+	for(int i = 0; i < NUMBER_OF_BALLS; i++)
+	{
+		centerOfMass.x += Position[i].x;
+		centerOfMass.y += Position[i].y;
+		centerOfMass.z += Position[i].z;
+	}
+
+	//then divide by the number of balls
+	centerOfMass.x /= NUMBER_OF_BALLS;
+	centerOfMass.y /= NUMBER_OF_BALLS;
+	centerOfMass.z /= NUMBER_OF_BALLS;
+
+	//EZ, now we're done
 	return(centerOfMass);
 }
 
@@ -308,8 +349,21 @@ float4 linearVelocity()
 	linearVelocity.y = 0.0;
 	linearVelocity.z = 0.0;
 	
-	// ????????????????????????????????????????????????????????
+	// ???????????????????????????????????????????????????????? SOLVED?
 	// Return the linear velocity of the system.
+	// LV = SUM(v_i)/N, since all sphere masses are 1... you get the idea
+
+	for(int i = 0; i < NUMBER_OF_BALLS; i++)
+	{
+		linearVelocity.x += Velocity[i].x;
+		linearVelocity.y += Velocity[i].y;
+		linearVelocity.z += Velocity[i].z;
+	}
+
+	//same drill as before (I hope)
+	linearVelocity.x /= NUMBER_OF_BALLS;
+	linearVelocity.y /= NUMBER_OF_BALLS;
+	linearVelocity.z /= NUMBER_OF_BALLS;
 	
 	return(linearVelocity);
 }
