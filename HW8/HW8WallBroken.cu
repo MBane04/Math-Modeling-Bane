@@ -324,7 +324,7 @@ float4 centerOfMass()
 
 	//Com = SUM(x_i * m_i)/N, since all sphere masses are 1, we can ignore the mass term
 	
-	//sum all the positions (done for us, thanks Dr. Wyatt)
+	//sum all the positions
 	for(int i = 0; i < NUMBER_OF_BALLS; i++)
 	{
 		centerOfMass.x += Position[i].x;
