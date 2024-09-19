@@ -1,4 +1,4 @@
-//nvcc WallBroken.cu -o bounce -lglut -lm -lGLU -lGL																													
+//nvcc HW8SSSSWallBroken.cu -o bounce -lglut -lm -lGLU -lGL																													
 //To stop hit "control c" in the window you launched it from.
 #include <iostream>
 #include <fstream>
@@ -131,13 +131,13 @@ void KeyPressed(unsigned char key, int x, int y)
 	}
 	
 	float dx = 0.05f;
-	if(key == 'a')
+	if(key == 'd')
 	{
 		glTranslatef(-dx, 0.0, 0.0);
 		drawPicture();
 		terminalPrint();
 	}
-	if(key == 'd')
+	if(key == 'a')
 	{
 		glTranslatef(dx, 0.0, 0.0);
 		drawPicture();
@@ -532,8 +532,8 @@ void terminalPrint()
 	system("clear");
 	
 	printf("\n");
-	printf("\n X/x: Move Right move left");
-	printf("\n Y/y: Move Up move down");
+	printf("\n d/a: Move Right move left");
+	printf("\n w/s: Move Up move down");
 	printf("\n Z/z: Move in move out");
 	
 	printf("\n");
