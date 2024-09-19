@@ -91,15 +91,23 @@ void KeyPressed(unsigned char key, int x, int y)
 		terminalPrint();
 		// ??????????????????????????????????????????
 		// Zero out center of mass and linear velocity of the system.
-		pos = {0.0, 0.0, 0.0, 0.0};
-		vel = {0.0, 0.0, 0.0, 0.0};
+
+		pos = centerOfMass();
+		vel = linearVelocity();
+		
+		for(int i = 0; i < NUMBER_OF_BALLS; i++)
+		{
+			Position[i].x -= pos.x;
+			Position[i].y -= pos.y;
+			Position[i].z -= pos.z;
+
+			Velocity[i].x -= vel.x;
+			Velocity[i].y -= vel.y;
+			Velocity[i].z -= vel.z;
+		}
 
 		drawPicture();
 		printf("\n The simulation has been zeroed out.\n");
-
-		//to show that it worked
-		printf("pos = (%f, %f, %f)\n", pos.x, pos.y, pos.z);
-		printf("vel = (%f, %f, %f)\n", vel.x, vel.y, vel.z);
 	}
 	
 	if(key == '1')
@@ -109,13 +117,16 @@ void KeyPressed(unsigned char key, int x, int y)
 		terminalPrint();
 		// ??????????????????????????????????????????
 
-		//the functions should return both of these as float, so call them
+		//move the center of mass and linear velocity to the center of mass and linear velocity of the system.
+		//here are our cureent COM and LV
 		pos = centerOfMass();
 		vel = linearVelocity();
 
+
+
 		//Print out center of mass and linear velocity of the system.
 		printf("\n The center of mass is: x = %f, y = %f, z = %f", pos.x, pos.y, pos.z);
-		printf("\n The linear velocity is: x = %f, y = %f, z = %f", vel.x, vel.y, vel.z);
+		printf("\n The linear velocity is: x = %f, y = %f, z = %f\n", vel.x, vel.y, vel.z);
 	}
 	
 	// Turns tracers on and off
