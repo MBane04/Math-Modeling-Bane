@@ -1,4 +1,4 @@
-//nvcc HitTheWallBroken.cu -o bounce -lglut -lm -lGLU -lGL																													
+//nvcc HW9HitTheWallBroken.cu -o bounce -lglut -lm -lGLU -lGL																													
 //To stop hit "control c" in the window you launched it from.
 #include <iostream>
 #include <fstream>
@@ -29,6 +29,7 @@ int Trace;
 int Pause;
 int PrintRate;
 int PrintCount;
+
 
 // Units and universal constants
 float MassUnitConverter;
@@ -84,8 +85,18 @@ void reshape(int w, int h)
 
 void KeyPressed(unsigned char key, int x, int y)
 {
-	// ??????????????????????????????????????????????
+	// ?????????????????????????????????????????????? SOLVED
 	// Make a key that will propel the asteriod into your wall
+
+	if(key =='f') //FIRE
+	{
+		for(int i = 0; i < NUMBER_OF_BALLS; i++)
+		{
+			Velocity[i].x += 100.0;
+		}
+		drawPicture();
+		terminalPrint();
+	}
 	
 	
 	if(key == 'k')
@@ -383,14 +394,33 @@ void getForces()
 		Force[i].z = 0.0;
 	}
 	
-	kSphere = 1000.0;
+	kSphere = 100000.0;
 	kSphereReduction = 0.5;
 	for(int i = 0; i < NUMBER_OF_BALLS; i++)
 	{	
 		// ?????????????????????????????????????????????????????
 		// Make the asteriods inilastically bounce off the wall.
-		
-		
+
+		float wallStiffness = 10000.0;
+		float wallReduction = 0.5;
+
+		//if the radius of one sphere goes outside of the wall
+		magnitude = wallStiffness * (sphereRadius - (25.0 - Position[i].x));
+		if(Position[i].x > 25.0 - sphereRadius && Position[i].x < 25.0 + 10.0)
+		{
+			//only if the ball hits the wall apply a force
+			if(Position[i].y < 5.0 && Position[i].y > -5.0 && Position[i].z < 5.0 && Position[i].z > -5.0)
+			{
+				if(Velocity[i].x > 0.0)
+				{
+					Force[i].x -= magnitude;
+				}
+				else
+				{
+					Force[i].x -= magnitude * wallReduction;
+				}
+			}
+		}
 		
 		// This adds forces between asteriods.
 		for(int j = 0; j < i; j++)
@@ -540,9 +570,12 @@ void terminalPrint()
 	printf("\n");
 	printf("\n k: Will zero out the center of mass and linear velocity of the system.");
 	printf("\n 1: Will print the center of mass and the linear velocity of the system.");
-	// ????????????????????????????????????????????
+	// ???????????????????????????????????????????? SOLVED
 	// Tell people about your new key
-	
+	printf("\n f:\e[1m \033[0;31mFIIIIRRRRE!!!!!!" "\e[m --> Will propel the asteriods into the wall.\n");
+	//printf("--> Will propel the asteriods into the wall.\n");
+
+
 	printf("\033[0m");
 	printf("\n t: Trace on/off toggle --> ");
 	printf(" Tracing is:");
