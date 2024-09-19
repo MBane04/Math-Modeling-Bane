@@ -93,8 +93,13 @@ void KeyPressed(unsigned char key, int x, int y)
 		// Zero out center of mass and linear velocity of the system.
 		pos = {0.0, 0.0, 0.0, 0.0};
 		vel = {0.0, 0.0, 0.0, 0.0};
+
 		drawPicture();
 		printf("\n The simulation has been zeroed out.\n");
+
+		//to show that it worked
+		printf("pos = (%f, %f, %f)\n", pos.x, pos.y, pos.z);
+		printf("vel = (%f, %f, %f)\n", vel.x, vel.y, vel.z);
 	}
 	
 	if(key == '1')
