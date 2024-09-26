@@ -410,7 +410,7 @@ void getForces()
 	{	
 		if(25.0 < Position[i].x + SphereDiameter/2.0 && Position[i].x + SphereDiameter/2.0 < 26.0)
 		{
-			if(-5.0 < Position[i].z && Position[i].z < 5.0 && -5.0 < Position[i].z && Position[i].z < 5.0)
+			if(-5.0 < Position[i].y && Position[i].y < 5.0 && -5.0 < Position[i].z && Position[i].z < 5.0)
 			{
 				if(0.0 < Velocity[i].x)
 				{
@@ -454,9 +454,10 @@ void getForces()
 				dv.y = Velocity[j].y - Velocity[i].y;
 				dv.z = Velocity[j].z - Velocity[i].z;
 				inOut = d.x*dv.x + d.y*dv.y + d.z*dv.z;
+				float idealGasConst = 6*kSphere;
 				// ??????????????????????????????????????????????
 				// Make this be an an ideal gas repulsion model.. 
-				if(inOut < 0.0) magnitude = kSphere*(SphereDiameter- d.w); // If inOut is negative the sphere are converging.
+				if(inOut < 0.0) magnitude = idealGasConst*(SphereDiameter- d.w); // If inOut is negative the sphere are converging.
 				else magnitude = kSphereReduction*kSphere*(SphereDiameter- d.w); // If inOut is positive the sphere are diverging.
 				
 				// Doling out the force in the proper perfortions using unit vectors.
