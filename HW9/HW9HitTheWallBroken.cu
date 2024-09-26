@@ -417,7 +417,7 @@ void getForces()
 				}
 				else
 				{
-					Force[i].x -= magnitude * wallReduction;
+					Force[i].x -= magnitude * wallReduction; 
 				}
 			}
 		}
