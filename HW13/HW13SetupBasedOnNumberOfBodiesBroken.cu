@@ -14,7 +14,7 @@
 #include <curand.h>
 #include <curand_kernel.h>
 
-#define NUMBER_OF_BODIES 10
+#define NUMBER_OF_BODIES 1000
 #define PI 3.14159
 using namespace std;
 
@@ -197,7 +197,7 @@ void setInitailConditions()
 	double diameterOfCeres;
 	double densityOfCeres;
 	double volumeOfCeres;
-	double G = ????; //km^3/kg*hr^2
+	double G = 1; //km^3/kg*hr^2
 	
 	// Seeding the random number generater.
 	srand((unsigned) time(&t));
@@ -212,15 +212,18 @@ void setInitailConditions()
 	// We are settting the length unit to be th diameter of Ceres.
 	// We are setting the time unit to be the such that the universal gravity constant is 1.
 	
-	massOfCeres = ????; // kg
-	diameterOfCeres = ????; // km
-	densityOfCeres = ????; // kg/km^3
-	volumeOfCeres = ????; // km^3
+	massOfCeres = 9.383e20/NUMBER_OF_BODIES; // kg
+	diameterOfCeres = 940/cbrt(NUMBER_OF_BODIES); // km
+	volumeOfCeres = 4.0/3.0 * PI * pow(diameterOfCeres, 3); // km^3
+	densityOfCeres = massOfCeres/volumeOfCeres; // kg/km^3
 	
-	MassUnitConverter = ????; // kg
-	LengthUnitConverter = ????; // km
-	TimeUnitConverter = ????; // hr
+	MassUnitConverter = 9.383e20; // kg
+	LengthUnitConverter = 940; // km
+	TimeUnitConverter = 1.011; // hr
 	
+	printf("\n Mass of Ceres = %e kilograms", massOfCeres);
+	printf("\n Diameter of Ceres = %f kilometers", diameterOfCeres);
+	printf("\n Density of Ceres = %e kilograms/kilometer^3", densityOfCeres);
 	printf("\n MassUnitConverter = %e kilograms", MassUnitConverter);
 	printf("\n LengthUnitConverter = %e kilometers", LengthUnitConverter);
 	printf("\n TimeUnitConverter = %e hours", TimeUnitConverter);
