@@ -197,7 +197,10 @@ void setInitailConditions()
 	double diameterOfCeres;
 	double densityOfCeres;
 	double volumeOfCeres;
-	double G = 1; //km^3/kg*hr^2
+	//INCOMPLETE, CONVERSION NEEDED
+	//G = 6.67430e-11; //m^3/kg*sec^2
+	//G = 8.64989e-13 //km^3/kg*hr^2
+	double G = 8.64989e-13; //km^3/kg*hr^2
 	
 	// Seeding the random number generater.
 	srand((unsigned) time(&t));
@@ -212,14 +215,17 @@ void setInitailConditions()
 	// We are settting the length unit to be th diameter of Ceres.
 	// We are setting the time unit to be the such that the universal gravity constant is 1.
 	
+	//
 	massOfCeres = 9.383e20/NUMBER_OF_BODIES; // kg
 	diameterOfCeres = 940/cbrt(NUMBER_OF_BODIES); // km
 	volumeOfCeres = 4.0/3.0 * PI * pow(diameterOfCeres, 3); // km^3
 	densityOfCeres = massOfCeres/volumeOfCeres; // kg/km^3
 	
-	MassUnitConverter = 9.383e20; // kg
-	LengthUnitConverter = 940; // km
+	//these calculations are now our units, so we multiply by these to get the real values
+	MassUnitConverter = massOfCeres; // kg /
+	LengthUnitConverter = diameterOfCeres; // km
 	TimeUnitConverter = 1.011; // hr
+	
 	
 	printf("\n Mass of Ceres = %e kilograms", massOfCeres);
 	printf("\n Diameter of Ceres = %f kilometers", diameterOfCeres);
@@ -356,7 +362,7 @@ float4 centerOfMass()
 	
 	for(int i = 0; i < NUMBER_OF_BODIES; i++)
 	{
-    		centerOfMass.x += Position[i].x*SphereMass;
+    	centerOfMass.x += Position[i].x*SphereMass;
 		centerOfMass.y += Position[i].y*SphereMass;
 		centerOfMass.z += Position[i].z*SphereMass;
 		totalMass += SphereMass;
@@ -380,7 +386,7 @@ float4 linearVelocity()
 	
 	for(int i = 0; i < NUMBER_OF_BODIES; i++)
 	{
-    		linearVelocity.x += Velocity[i].x*SphereMass;
+    	linearVelocity.x += Velocity[i].x*SphereMass;
 		linearVelocity.y += Velocity[i].y*SphereMass;
 		linearVelocity.z += Velocity[i].z*SphereMass;
 		totalMass += SphereMass;
@@ -436,7 +442,7 @@ void getForces()
 	{	
 		if(25.0 < Position[i].x + SphereDiameter/2.0 && Position[i].x + SphereDiameter/2.0 < 26.0)
 		{
-			if(-5.0 < Position[i].z && Position[i].z < 5.0 && -5.0 < Position[i].z && Position[i].z < 5.0)
+			if(-5.0 < Position[i].y && Position[i].y < 5.0 && -5.0 < Position[i].z && Position[i].z < 5.0)
 			{
 				if(0.0 < Velocity[i].x)
 				{

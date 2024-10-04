@@ -1,0 +1,61 @@
+Notebook[{Cell[
+CellGroupData[{Cell[
+BoxData[{RowBox[{"Mc"," ","="," ",RowBox[{"9.383","*",RowBox[
+{"10","^",RowBox[{"(","20",")"}]}]}]}],"\n",RowBox[{"Dc"," ","="," ","940"}],"\n",RowBox[
+{"Vc"," ","="," ",RowBox[{RowBox[{"4","/","3"}]," ","*"," ","Pi"," ","*"," ",RowBox[
+{RowBox[{"(","Dc",")"}],"^","3"}]}]}],"\n",RowBox[{RowBox[{"n"," ","="," ","1000"}],"\n"}]}],
+"Input",CellLabel -> "In[45]:= ",ExpressionUUID -> "ccf3ff1b-d3b4-467f-aec2-794a9661e7cb"],Cell[
+BoxData[
+"9.382999999999999`*^20",StandardForm],"Output",CellLabel -> "Out[45]= ",ExpressionUUID -> "22c380c9-285f-48db-97f8-4786e6d71edc"],Cell[
+BoxData[
+"940",StandardForm],"Output",CellLabel -> "Out[46]= ",ExpressionUUID -> "dc31955e-5437-4570-b85c-8f5f16eddd2d"],Cell[
+BoxData[
+FractionBox[RowBox[{"3322336000"," ","\[Pi]"}],"3"],StandardForm],"Output",CellLabel -> "Out[47]= ",
+ExpressionUUID -> "7b4ebb12-267c-4d8b-b7c6-27795172fb74"],Cell[
+BoxData["1000",StandardForm],
+"Output",CellLabel -> "Out[48]= ",ExpressionUUID -> "83898f20-fe20-48a0-b220-047a619d358a"]},
+Open],ExpressionUUID -> "d71da8cd-7abd-4ba4-b010-af49e3e5e700"],Cell[
+CellGroupData[
+{Cell[
+BoxData[{RowBox[{"Mb"," ","="," ",RowBox[{"Mc","/","n"}]}],"\n",RowBox[{"Db"," ","="," ",RowBox[
+{"940"," ","/"," ",RowBox[{"CubeRoot","[","n","]"}]}]}],"\n",RowBox[{"Vb"," ","=",RowBox[
+{"N","["," ",RowBox[{RowBox[{"4","/","3"}]," ","*"," ","Pi"," ","*"," ",RowBox[{RowBox[
+{"(","Db",")"}],"^","3"}]}],"]"}]}],"\n",RowBox[{"Pb"," ","="," ",RowBox[{"Mb","/","Vb"}]}]}],
+"Input",CellLabel -> "In[49]:= ",ExpressionUUID -> "a21971dd-5254-4901-afb3-07541adacd95"],Cell[
+BoxData[
+"9.382999999999999`*^17",StandardForm],"Output",CellLabel -> "Out[49]= ",ExpressionUUID -> "93689d32-d1b1-4c48-97c7-6067930db743"],Cell[
+BoxData[
+"94",StandardForm],"Output",CellLabel -> "Out[50]= ",ExpressionUUID -> "3d1cb811-e728-4d20-bbc5-33a486332db0"],Cell[
+BoxData[
+"3.4791421234522993`*^6",StandardForm],"Output",CellLabel -> "Out[51]= ",ExpressionUUID -> "58f34c79-f932-49f3-9b1f-186a5de00b72"],Cell[
+BoxData[
+"2.696929204688365`*^11",StandardForm],"Output",CellLabel -> "Out[52]= ",ExpressionUUID -> "18d4564a-de75-45f9-a2ce-dec5588cdd7d"]},
+Open],ExpressionUUID -> "bb77945b-f55e-4e22-b902-e81793d760ad"],Cell[
+CellGroupData[
+{Cell[
+BoxData[RowBox[{"G"," ","="," ",RowBox[{"6.67430"," ","*"," ",RowBox[{"10","^",RowBox[
+{"(",RowBox[{"-","11"}],")"}]," ",RowBox[{"(*",RowBox[{RowBox[{"m","^","3"}],"/",RowBox[
+{"(",RowBox[{"kg","*",RowBox[{"s","^","2"}]}],")"}]}],"*)"}]}]}]}]],"Input",CellLabel -> "In[53]:= ",
+ExpressionUUID -> "eee07d68-8ed3-49ba-9a8e-aa87a3d47b4c"],Cell[
+BoxData["6.6743`*^-11",
+StandardForm],"Output",CellLabel -> "Out[53]= ",ExpressionUUID -> "8ba2d0a9-6c1b-47c6-84cf-72c514245e3a"]},
+Open],ExpressionUUID -> "13398203-8ea5-4bac-a403-863165398704"],Cell[
+CellGroupData[
+{Cell[
+BoxData[RowBox[{"G"," ","*"," ",RowBox[{"1","/",RowBox[{RowBox[{"(","1000",")"}],"^","3"," ",RowBox[
+{"(*",RowBox[{RowBox[{RowBox[{"km","^","3"}],"/","kg"}],"*",RowBox[{"s","^","2"}]}],"*)"}]}]}]}]],
+"Input",CellLabel -> "In[54]:= ",ExpressionUUID -> "46381835-192d-4db2-8ef5-4616abaf3321"],Cell[
+BoxData[
+"6.6743`*^-20",StandardForm],"Output",CellLabel -> "Out[54]= ",ExpressionUUID -> "0de7d6a9-c677-43c4-bbd2-bcec663cc210"]},
+Open],ExpressionUUID -> "a7ba6d7a-489a-4964-b257-84791f96666d"],Cell[
+CellGroupData[
+{Cell[
+BoxData[RowBox[{"%"," ","*"," ",RowBox[{RowBox[{"(","3600",")"}],"^","2"," ",RowBox[
+{"(*",RowBox[{RowBox[{RowBox[{RowBox[{"km","^","3"}],"/","kg"}],"*",RowBox[{"hr","^","2"}]}],")"}],"*)"}]}]}]],
+"Input",CellLabel -> "In[55]:= ",ExpressionUUID -> "86a62d99-2658-4130-b1d8-69d8b59923fc"],Cell[
+BoxData[
+"8.6498928`*^-13",StandardForm],"Output",CellLabel -> "Out[55]= ",ExpressionUUID -> "4181f214-4aa7-46e3-bb19-7537e3233bc9"]},
+Open],ExpressionUUID -> "fdc5c583-b4e3-4deb-8440-e33654aadde4"],Cell[
+BoxData[""],
+"Input",CellLabel -> "In[56]:= ",ExpressionUUID -> "55c6c371-10bc-4e2f-bed0-9553f3c8bb5e"]},
+StyleDefinitions -> "Default.nb",FrontEndVersion -> "14.1 for Wolfram Cloud 1.69.0.1 (September 4, 2024)"]
