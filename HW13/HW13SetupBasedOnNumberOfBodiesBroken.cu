@@ -216,14 +216,14 @@ void setInitailConditions()
 	// We are setting the time unit to be the such that the universal gravity constant is 1.
 	
 	//
-	massOfCeres = 9.383e20/NUMBER_OF_BODIES; // kg
-	diameterOfCeres = 940/cbrt(NUMBER_OF_BODIES); // km
+	massOfCeres = 9.383e20; // kg
+	diameterOfCeres = 940; // km
 	volumeOfCeres = 4.0/3.0 * PI * pow(diameterOfCeres, 3); // km^3
 	densityOfCeres = massOfCeres/volumeOfCeres; // kg/km^3
 	
 	//these calculations are now our units, so we multiply by these to get the real values
-	MassUnitConverter = massOfCeres; // kg /
-	LengthUnitConverter = diameterOfCeres; // km
+	MassUnitConverter = massOfCeres/NUMBER_OF_BODIES; // kg /
+	LengthUnitConverter = diameterOfCeres/cbrt(NUMBER_OF_BODIES); // km
 	TimeUnitConverter = 1.011; // hr
 	
 	
