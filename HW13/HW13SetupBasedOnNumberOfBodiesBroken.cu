@@ -230,6 +230,8 @@ void setInitailConditions()
 	printf("\n Mass of Ceres = %e kilograms", massOfCeres);
 	printf("\n Diameter of Ceres = %f kilometers", diameterOfCeres);
 	printf("\n Density of Ceres = %e kilograms/kilometer^3", densityOfCeres);
+	printf("\n Volume of Ceres = %e kilometers^3", volumeOfCeres);
+
 	printf("\n MassUnitConverter = %e kilograms", MassUnitConverter);
 	printf("\n LengthUnitConverter = %e kilometers", LengthUnitConverter);
 	printf("\n TimeUnitConverter = %e hours", TimeUnitConverter);
