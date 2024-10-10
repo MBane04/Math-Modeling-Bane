@@ -1,6 +1,6 @@
 # compiles and runs the current homework
 
-nvcc HW13/HW13SetupBasedOnNumberOfBodiesBroken.cu -o HW13/bounce -lglut -lm -lGLU -lGL
+nvcc HW15/HW15SetupRandomMassesBroken.cu -o HW15/bounce -lglut -lm -lGLU -lGL
 
-cd HW13
+cd HW15
 ./bounce
