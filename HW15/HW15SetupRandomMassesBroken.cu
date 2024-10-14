@@ -23,7 +23,7 @@ float RunTime;
 float Dt;
 float4 Position[NUMBER_OF_BODIES], Velocity[NUMBER_OF_BODIES], Force[NUMBER_OF_BODIES], Color[NUMBER_OF_BODIES];
 // ????? you will put your masses and radii in here.
-float BodyMass[NUMBER_OF_BODIES], BodyRadius[NUMBER_OF_BODIES], simulationRadius[NUMBER_OF_BODIES]; //added simulationRadius to store the radius of the spheres in simulation units
+float BodyMass[NUMBER_OF_BODIES], BodyRadius[NUMBER_OF_BODIES];
 // You will need to get ride of these and replace them with the ones above.
 float SphereMass;
 float SphereDiameter;
@@ -258,6 +258,8 @@ void setInitailConditions()
 	printf("\n LengthUnitConverter = %e kilometers", LengthUnitConverter);
 	printf("\n TimeUnitConverter = %e hours", TimeUnitConverter);
 	
+
+
 	// If we did everthing right the universal gravity constant should be 1.
 	GavityConstant = 1.0;
 	printf("\n The gavity constant = %f in our units", GavityConstant);
@@ -269,9 +271,11 @@ void setInitailConditions()
 	//SphereDiameter = 1.0;
 	//SphereMass = 1.0;
 
+	//now make the values almost 1 for the sphere mass and radius
 	for(int i = 0; i < NUMBER_OF_BODIES; i++)
 	{
-		simulationRadius[i] = BodyRadius[i]/LengthUnitConverter;
+		BodyRadius[i] /= LengthUnitConverter;
+		BodyMass[i] /= MassUnitConverter;
 	}
 
 	// Making the size of the intial globe we use to place the bodies.
@@ -303,7 +307,7 @@ void setInitailConditions()
 			for(int j = 0; j < i; j++)
 			{
 				seperation = sqrt((Position[i].x-Position[j].x)*(Position[i].x-Position[j].x) + (Position[i].y-Position[j].y)*(Position[i].y-Position[j].y) + (Position[i].z-Position[j].z)*(Position[i].z-Position[j].z));
-				if(seperation < simulationRadius[i] + simulationRadius[j])
+				if(seperation < BodyRadius[i] + BodyRadius[j])
 				{
 					test = 0;
 					break;
@@ -351,10 +355,10 @@ void drawPicture()
 			glTranslatef(Position[i].x, Position[i].y, Position[i].z);
 			//the sphere should be near the average radius of the asteroids, but will be different depending on the shpere mass 
 			//we can compare the radius to the average radius of the asteroids to see if it is correct
-			glutSolidSphere(simulationRadius[i], 30, 30);
+			glutSolidSphere(BodyRadius[i], 30, 30);
 		glPopMatrix();
 
-		printf("Drawn radius: %f\n", simulationRadius[i]/LengthUnitConverter);
+		printf("Drawn radius: %f\n", BodyRadius[i]);
 	}
 	
 	// Drawing the wall.
@@ -466,7 +470,7 @@ void getForces()
 	kSphereReduction = 0.5;
 	for(int i = 0; i < NUMBER_OF_BODIES; i++)
 	{	
-		if(25.0 < Position[i].x + simulationRadius[i] && Position[i].x + simulationRadius[i] < 26.0)
+		if(25.0 < Position[i].x + BodyRadius[i] && Position[i].x + BodyRadius[i] < 26.0)
 		{
 			if(-5.0 < Position[i].z && Position[i].z < 5.0 && -5.0 < Position[i].z && Position[i].z < 5.0)
 			{
@@ -495,17 +499,17 @@ void getForces()
 			unit.z = d.z/d.w;
 			
 			// Nonelastic sphere collisions 
-			if(d.w < simulationRadius[i] + simulationRadius[j])
+			if(d.w < BodyRadius[i] + BodyRadius[j])
 			{
 				// If the seperation gets too small the sphers may go through each other.
 				// If you are ok with that you do not need this line.
-				if(d.w < simulationRadius[i]+simulationRadius[j]/10.0)
+				if(d.w < BodyRadius[i]+BodyRadius[j]/10.0)
 				{
 					printf("\n Spheres %d and %d got to close. Make your sphere repultion stronger\n", i, j);
 					exit(0);
 				}
 				
-				intersectionArea = (PI/4.0)*((simulationRadius[i] + simulationRadius[j])*(simulationRadius[i] + simulationRadius[j]) - d.w*d.w);
+				intersectionArea = (PI/4.0)*((BodyRadius[i] + BodyRadius[j])*(BodyRadius[i] + BodyRadius[j]) - d.w*d.w);
 				
 				dv.x = Velocity[j].x - Velocity[i].x;
 				dv.y = Velocity[j].y - Velocity[i].y;
@@ -528,7 +532,7 @@ void getForces()
 				
 				// This adds the gravity between asteroids but the gravity is lock in at what it 
 				// was at impact.
-				magnitude = GavityConstant*(BodyMass[i]+BodyMass[j])*(BodyMass[i]+BodyMass[j])/((simulationRadius[i] + simulationRadius[j])*(simulationRadius[i] + simulationRadius[j]));
+				magnitude = GavityConstant*(BodyMass[i]+BodyMass[j])*(BodyMass[i]+BodyMass[j])/((BodyRadius[i] + BodyRadius[j])*(BodyRadius[i] + BodyRadius[j]));
 				Force[i].x += magnitude*unit.x;
 				Force[i].y += magnitude*unit.y;
 				Force[i].z += magnitude*unit.z;
@@ -684,13 +688,13 @@ int main(int argc, char** argv)
 	YWindowSize = 1000; 
 
 	// Clip plains
-	Near = 0.02;
-	Far = 5000000.0;
+	Near = 0.2;
+	Far = 50.0*SphereDiameter;
 
 	//Where your eye is located
 	EyeX = 0.0;
 	EyeY = 0.0;
-	EyeZ = 20.0;
+	EyeZ = 25.0*SphereDiameter;
 
 	//Where you are looking
 	CenterX = 0.0;
