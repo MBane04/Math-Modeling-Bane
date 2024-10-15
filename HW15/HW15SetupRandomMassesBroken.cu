@@ -25,8 +25,8 @@ float4 Position[NUMBER_OF_BODIES], Velocity[NUMBER_OF_BODIES], Force[NUMBER_OF_B
 // ????? you will put your masses and radii in here.
 float BodyMass[NUMBER_OF_BODIES], BodyRadius[NUMBER_OF_BODIES];
 // You will need to get ride of these and replace them with the ones above.
-float SphereMass;
-float SphereDiameter;
+// float SphereMass; // Removed as it's no longer needed
+// float SphereDiameter; // Removed as it's no longer needed
 float MaxVelocity;
 int Trace;
 int Pause;
@@ -97,7 +97,7 @@ void KeyPressed(unsigned char key, int x, int y)
 		
 		for(int i = 0; i < NUMBER_OF_BODIES; i++)
 		{
-			Velocity[i].x += 20.0;
+			Velocity[i].x += 100.0;
 			Velocity[i].y += 0.0;
 			Velocity[i].z += 0.0;
 		}
@@ -245,10 +245,8 @@ void setInitailConditions()
 	for(int i = 0; i < NUMBER_OF_BODIES; i++)
 	{
 		BodyRadius[i] = (diameterOfCeres*cbrt(BodyMass[i]/massOfCeres))/2; // km
-		printf("\n Body %d has a mass of %e kilograms and a radius of %f kilometers", i, BodyMass[i], BodyRadius[i]);
 		sumOfRadii += BodyRadius[i];
 	}
-
 	
 	// Set your length unit
 	LengthUnitConverter = sumOfRadii/NUMBER_OF_BODIES; // km
@@ -261,7 +259,7 @@ void setInitailConditions()
 
 
 	// If we did everthing right the universal gravity constant should be 1.
-	GavityConstant = 1.0;
+	GavityConstant = 10.0;
 	printf("\n The gavity constant = %f in our units", GavityConstant);
 	
 	// All spheres are the same diameter and mass so these should be 1. Noy true
@@ -276,6 +274,8 @@ void setInitailConditions()
 	{
 		BodyRadius[i] /= LengthUnitConverter;
 		BodyMass[i] /= MassUnitConverter;
+
+		printf("\n Body %d has a mass of %e kilograms and a radius of %f kilometers", i, BodyMass[i], BodyRadius[i]);	
 	}
 
 	// Making the size of the intial globe we use to place the bodies.
@@ -306,7 +306,7 @@ void setInitailConditions()
 			test = 1;
 			for(int j = 0; j < i; j++)
 			{
-				seperation = sqrt((Position[i].x-Position[j].x)*(Position[i].x-Position[j].x) + (Position[i].y-Position[j].y)*(Position[i].y-Position[j].y) + (Position[i].z-Position[j].z)*(Position[i].z-Position[j].z));
+				seperation = sqrt((Position[j].x-Position[i].x)*(Position[j].x-Position[i].x) + (Position[j].y-Position[i].y)*(Position[j].y-Position[i].y) + (Position[j].z-Position[i].z)*(Position[j].z-Position[i].z));
 				if(seperation < BodyRadius[i] + BodyRadius[j])
 				{
 					test = 0;
@@ -353,17 +353,24 @@ void drawPicture()
 		glColor3d(Color[i].x, Color[i].y, Color[i].z);
 		glPushMatrix();
 			glTranslatef(Position[i].x, Position[i].y, Position[i].z);
-			//the sphere should be near the average radius of the asteroids, but will be different depending on the shpere mass 
-			//we can compare the radius to the average radius of the asteroids to see if it is correct
 			glutSolidSphere(BodyRadius[i], 30, 30);
 		glPopMatrix();
-
-		printf("Drawn radius: %f\n", BodyRadius[i]);
 	}
 	
 	// Drawing the wall.
-	glColor3d(1.0, 1.0, 0.75);
+	int temp;
 	glBegin(GL_QUADS);
+		temp = WallCount%511;
+		if(temp <= 255)
+		{
+			glColor3d((float)temp/255.0, 0.0, 0.0);
+		}
+		else 
+		{
+			temp = 256 - temp%255;
+			//glColor3d((float)temp/255.0, (float)temp/255.0, (float)temp/255.0);
+			glColor3d((float)temp/255.0, 0.0, 0.0);
+		}
 		glVertex3f(25.0, -5.0, 5.0);
 		glVertex3f(25.0, -5.0, -5.0);
 		glVertex3f(25.0, 5.0, -5.0);
@@ -469,18 +476,18 @@ void getForces()
 	kSphere = 10000.0;
 	kSphereReduction = 0.5;
 	for(int i = 0; i < NUMBER_OF_BODIES; i++)
-	{	
+	{
 		if(25.0 < Position[i].x + BodyRadius[i] && Position[i].x + BodyRadius[i] < 26.0)
 		{
 			if(-5.0 < Position[i].z && Position[i].z < 5.0 && -5.0 < Position[i].z && Position[i].z < 5.0)
 			{
 				if(0.0 < Velocity[i].x)
 				{
-					magnitude = (Position[i].x + SphereDiameter/2.0 - 25.0)*kWall;
+					magnitude = (Position[i].x + BodyRadius[i] - 25.0)*kWall;
 				}
 				else
 				{
-					magnitude = (Position[i].x + SphereDiameter/2.0 - 25.0)*kWall*kWallReduction;
+					magnitude = (Position[i].x + BodyRadius[i] - 25.0)*kWall*kWallReduction;
 				}
 				Force[i].x -= magnitude;
 			}
@@ -679,7 +686,6 @@ void terminalPrint()
 	printf("\n");
 }
 
-
 int main(int argc, char** argv)
 {
 	startMeUp();
@@ -689,12 +695,12 @@ int main(int argc, char** argv)
 
 	// Clip plains
 	Near = 0.2;
-	Far = 50.0*SphereDiameter;
+	Far = 5000.0;
 
 	//Where your eye is located
 	EyeX = 0.0;
 	EyeY = 0.0;
-	EyeZ = 25.0*SphereDiameter;
+	EyeZ = 25.0;
 
 	//Where you are looking
 	CenterX = 0.0;
