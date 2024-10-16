@@ -25,8 +25,8 @@ float4 Position[NUMBER_OF_BODIES], Velocity[NUMBER_OF_BODIES], Force[NUMBER_OF_B
 // ????? you will put your masses and radii in here.
 float BodyMass[NUMBER_OF_BODIES], BodyRadius[NUMBER_OF_BODIES];
 // You will need to get ride of these and replace them with the ones above.
-// float SphereMass; // Removed as it's no longer needed
-// float SphereDiameter; // Removed as it's no longer needed
+// float SphereMass; // Removed as it's no longer needed, plus it helps me find where I need to replace it.
+// float SphereDiameter; // Removed as it's no longer needed, yay for compilation errors.
 float MaxVelocity;
 int Trace;
 int Pause;
@@ -144,26 +144,26 @@ void KeyPressed(unsigned char key, int x, int y)
 	}
 	
 	float dx = 0.05f;
-	if(key == 'x')
+	if(key == 'd')
 	{
 		glTranslatef(-dx, 0.0, 0.0);
 		drawPicture();
 		terminalPrint();
 	}
-	if(key == 'X')
+	if(key == 'a')
 	{
 		glTranslatef(dx, 0.0, 0.0);
 		drawPicture();
 	}
 	
 	float dy = 0.05f;
-	if(key == 'y')
+	if(key == 'w')
 	{
 		glTranslatef(0.0, -dy, 0.0);
 		drawPicture();
 		terminalPrint();
 	}
-	if(key == 'Y')
+	if(key == 's')
 	{
 		glTranslatef(0.0, dy, 0.0);
 		drawPicture();
@@ -321,9 +321,9 @@ void setInitailConditions()
 		Velocity[i].z = (((float)rand()/(float)RAND_MAX)*2.0 - 1.0)*MaxVelocity;
 		
 		// Color of each asteroid. 
-		Color[i].x = 0.35;
-		Color[i].y = 0.22;
-		Color[i].z = 0.16;
+		Color[i].x = ((float)rand()/(float)RAND_MAX);
+		Color[i].y = ((float)rand()/(float)RAND_MAX);
+		Color[i].z = ((float)rand()/(float)RAND_MAX);
 		
 		Force[i].x = 0.0;
 		Force[i].y = 0.0;
@@ -473,7 +473,7 @@ void getForces()
 	
 	kWall = 20000.0;
 	kWallReduction = 0.2;
-	kSphere = 10000.0;
+	kSphere = 50000.0;
 	kSphereReduction = 0.5;
 	for(int i = 0; i < NUMBER_OF_BODIES; i++)
 	{
@@ -516,7 +516,7 @@ void getForces()
 					exit(0);
 				}
 				
-				intersectionArea = (PI/4.0)*((BodyRadius[i] + BodyRadius[j])*(BodyRadius[i] + BodyRadius[j]) - d.w*d.w);
+				intersectionArea = (PI/4.0)*(((BodyRadius[i] + BodyRadius[j])*(BodyRadius[i] + BodyRadius[j])) - d.w*d.w);
 				
 				dv.x = Velocity[j].x - Velocity[i].x;
 				dv.y = Velocity[j].y - Velocity[i].y;
@@ -644,8 +644,8 @@ void terminalPrint()
 	system("clear");
 	
 	printf("\n");
-	printf("\n X/x: Move Right move left");
-	printf("\n Y/y: Move Up move down");
+	printf("\n a/d: Move Right move left");
+	printf("\n w/s: Move Up move down");
 	printf("\n Z/z: Move in move out");
 	
 	printf("\n");
