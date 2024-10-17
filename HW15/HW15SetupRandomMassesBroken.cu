@@ -226,7 +226,7 @@ void setInitailConditions()
 	//first pass sets random masses and adds them up
 	for(int i = 0; i < NUMBER_OF_BODIES; i++)
 	{
-		random = ((float)rand()/(float)RAND_MAX)*100;
+		random = ((float)rand()/(float)RAND_MAX);
 		BodyMass[i] = random; //body mass will temporarily be set to random mass
 		totalMass += random; //add up all the masses
 	}
@@ -479,7 +479,7 @@ void getForces()
 	{
 		if(25.0 < Position[i].x + BodyRadius[i] && Position[i].x + BodyRadius[i] < 26.0)
 		{
-			if(-5.0 < Position[i].z && Position[i].z < 5.0 && -5.0 < Position[i].z && Position[i].z < 5.0)
+			if(-5.0 < Position[i].y && Position[i].y < 5.0 && -5.0 < Position[i].z && Position[i].z < 5.0)
 			{
 				if(0.0 < Velocity[i].x)
 				{
@@ -539,7 +539,7 @@ void getForces()
 				
 				// This adds the gravity between asteroids but the gravity is lock in at what it 
 				// was at impact.
-				magnitude = GavityConstant*(BodyMass[i]+BodyMass[j])*(BodyMass[i]+BodyMass[j])/((BodyRadius[i] + BodyRadius[j])*(BodyRadius[i] + BodyRadius[j]));
+				magnitude = GavityConstant*(BodyMass[i]*BodyMass[j])/((BodyRadius[i] + BodyRadius[j])*(BodyRadius[i] + BodyRadius[j]));
 				Force[i].x += magnitude*unit.x;
 				Force[i].y += magnitude*unit.y;
 				Force[i].z += magnitude*unit.z;
@@ -551,7 +551,7 @@ void getForces()
 			else
 			{
 				// This adds the gravity between asteroids when they are not touching.
-				magnitude = GavityConstant*(BodyMass[i] + BodyMass[j])*(BodyMass[i] + BodyMass[j])/(d.w*d.w);
+				magnitude = GavityConstant*(BodyMass[i]*BodyMass[j])/(d.w*d.w);
 				Force[i].x += magnitude*unit.x;
 				Force[i].y += magnitude*unit.y;
 				Force[i].z += magnitude*unit.z;
