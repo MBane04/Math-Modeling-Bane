@@ -259,7 +259,7 @@ void setInitailConditions()
 
 
 	// If we did everthing right the universal gravity constant should be 1.
-	GavityConstant = 10.0;
+	GavityConstant = 1.0;
 	printf("\n The gavity constant = %f in our units", GavityConstant);
 	
 	// All spheres are the same diameter and mass so these should be 1. Noy true
@@ -473,7 +473,7 @@ void getForces()
 	
 	kWall = 20000.0;
 	kWallReduction = 0.2;
-	kSphere = 10000.0;
+	kSphere = 50000.0;
 	kSphereReduction = 0.5;
 	for(int i = 0; i < NUMBER_OF_BODIES; i++)
 	{
@@ -518,8 +518,13 @@ void getForces()
 				
 				float r1 = BodyRadius[i];
 				float r2 = BodyRadius[j];
-				float diameter = BodyRadius[i] + BodyRadius[j];
-				intersectionArea = PI * (r2*r2 - pow(((r1*r1 - r2*r2 - diameter*diameter)/(-2*diameter))),2));
+
+				float term1 = r2 * r2;
+				float term2 = pow(((r1 * r1 - r2 * r2 - d.w * d.w) / (-2 * d.w)), 2);
+				//printf("term1: %f, term2: %f\n", term1, term2);
+
+				intersectionArea = PI * (term1 - term2);
+				//printf("intersectionArea: %f\n", intersectionArea);
 
 				dv.x = Velocity[j].x - Velocity[i].x;
 				dv.y = Velocity[j].y - Velocity[i].y;
@@ -542,7 +547,7 @@ void getForces()
 				
 				// This adds the gravity between asteroids but the gravity is lock in at what it 
 				// was at impact.
-				magnitude = GavityConstant*(BodyMass[i]+BodyMass[j])*(BodyMass[i]+BodyMass[j])/((BodyRadius[i] + BodyRadius[j])*(BodyRadius[i] + BodyRadius[j]));
+				magnitude = GavityConstant*BodyMass[j]*BodyMass[i]/((BodyRadius[i] + BodyRadius[j])*(BodyRadius[i] + BodyRadius[j]));
 				Force[i].x += magnitude*unit.x;
 				Force[i].y += magnitude*unit.y;
 				Force[i].z += magnitude*unit.z;
@@ -554,7 +559,7 @@ void getForces()
 			else
 			{
 				// This adds the gravity between asteroids when they are not touching.
-				magnitude = GavityConstant*(BodyMass[i] + BodyMass[j])*(BodyMass[i] + BodyMass[j])/((BodyRadius[i] + BodyRadius[j])*(BodyRadius[i] + BodyRadius[j]));
+				magnitude = GavityConstant*(BodyMass[i]*BodyMass[j])/((BodyRadius[i] + BodyRadius[j])*(BodyRadius[i] + BodyRadius[j]));
 				Force[i].x += magnitude*unit.x;
 				Force[i].y += magnitude*unit.y;
 				Force[i].z += magnitude*unit.z;
