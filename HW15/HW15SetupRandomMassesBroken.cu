@@ -554,7 +554,7 @@ void getForces()
 			else
 			{
 				// This adds the gravity between asteroids when they are not touching.
-				magnitude = GavityConstant*(BodyMass[i] + BodyMass[j])*(BodyMass[i] + BodyMass[j])/(d.w*d.w);
+				magnitude = GavityConstant*(BodyMass[i] + BodyMass[j])*(BodyMass[i] + BodyMass[j])/((BodyRadius[i] + BodyRadius[j])*(BodyRadius[i] + BodyRadius[j]));
 				Force[i].x += magnitude*unit.x;
 				Force[i].y += magnitude*unit.y;
 				Force[i].z += magnitude*unit.z;
