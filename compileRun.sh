@@ -1,6 +1,6 @@
 # compiles and runs the current homework
 
-nvcc HW15/HW15SetupRandomMassesBroken.cu -o HW15/bounce -lglut -lm -lGLU -lGL
+nvcc HW16/HW16FixForceFunction.cu -o HW16/bounce -lglut -lm -lGLU -lGL
 
-cd HW15
+cd HW16
 ./bounce

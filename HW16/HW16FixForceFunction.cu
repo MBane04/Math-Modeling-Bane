@@ -1,4 +1,4 @@
-//nvcc SetupRandomMassesBroken.cu -o bounce -lglut -lm -lGLU -lGL																													
+//nvcc HW16FixForceFunction.cu -o bounce -lglut -lm -lGLU -lGL
 //To stop hit "control c" in the window you launched it from.
 #include <iostream>
 #include <fstream>
@@ -24,9 +24,10 @@ float Dt;
 float4 Position[NUMBER_OF_BODIES], Velocity[NUMBER_OF_BODIES], Force[NUMBER_OF_BODIES], Color[NUMBER_OF_BODIES];
 // ????? you will put your masses and radii in here.
 float BodyMass[NUMBER_OF_BODIES], BodyRadius[NUMBER_OF_BODIES];
-// You will need to get ride of these and replace them with the ones above.
-// float SphereMass; // Removed as it's no longer needed, plus it helps me find where I need to replace it.
-// float SphereDiameter; // Removed as it's no longer needed, yay for compilation errors.
+
+float minRadius = BodyRadius[0]; //to keep track of the smallest body how it's behaving
+int minIndex = 0;
+
 float MaxVelocity;
 int Trace;
 int Pause;
@@ -38,7 +39,7 @@ int WallCount;
 double MassUnitConverter;
 double LengthUnitConverter;
 double TimeUnitConverter;
-float GavityConstant;
+float GravityConstant;
 
 // Window globals
 static int Window;
@@ -97,7 +98,7 @@ void KeyPressed(unsigned char key, int x, int y)
 		
 		for(int i = 0; i < NUMBER_OF_BODIES; i++)
 		{
-			Velocity[i].x += 100.0;
+			Velocity[i].x += 20.0;
 			Velocity[i].y += 0.0;
 			Velocity[i].z += 0.0;
 		}
@@ -144,26 +145,26 @@ void KeyPressed(unsigned char key, int x, int y)
 	}
 	
 	float dx = 0.05f;
-	if(key == 'd')
+	if(key == 'x')
 	{
 		glTranslatef(-dx, 0.0, 0.0);
 		drawPicture();
 		terminalPrint();
 	}
-	if(key == 'a')
+	if(key == 'X')
 	{
 		glTranslatef(dx, 0.0, 0.0);
 		drawPicture();
 	}
 	
 	float dy = 0.05f;
-	if(key == 'w')
+	if(key == 'y')
 	{
 		glTranslatef(0.0, -dy, 0.0);
 		drawPicture();
 		terminalPrint();
 	}
-	if(key == 's')
+	if(key == 'Y')
 	{
 		glTranslatef(0.0, dy, 0.0);
 		drawPicture();
@@ -218,75 +219,74 @@ void setInitailConditions()
 	diameterOfCeres = 940.0; // km
 	densityOfCeres = massOfCeres/((PI/6.0)*diameterOfCeres*diameterOfCeres*diameterOfCeres); // kg/km^3
 	
-	// ?????????? SOLVED
+	// ??????????
 	// Use random numbers to get all your different mass bodies
-	float totalMass = 0.0;
-	float random;
-
-	//first pass sets random masses and adds them up
+	// BodyMass[i] = ????
+	float srn = 0.0, sumMass = 0.0;
 	for(int i = 0; i < NUMBER_OF_BODIES; i++)
 	{
-		random = ((float)rand()/(float)RAND_MAX);
-		BodyMass[i] = random; //body mass will temporarily be set to random mass
-		totalMass += random; //add up all the masses
+		BodyMass[i] = (float)rand()/(float)RAND_MAX;
+		srn += BodyMass[i];
 	}
-
-	//second pass makes them all fractions of the total mass so that the total mass is equal to the mass of Ceres
-	for(int i = 0; i < NUMBER_OF_BODIES; i++)
-	{
-		BodyMass[i] = (BodyMass[i]/totalMass)*massOfCeres;
+	for(int i = 0; i < NUMBER_OF_BODIES; i++){
+		BodyMass[i] *= massOfCeres/srn;
+		sumMass += BodyMass[i];
 	}
-
-	// ??? Set your mass unit SOLVED
-	MassUnitConverter = massOfCeres/NUMBER_OF_BODIES; // kg
 	
 	// From the random masses you just did set all your corresponding radii
-	float sumOfRadii = 0.0;
+	// BodyRadius[] = ????
+	float sumRadii = 0.0; //km
 	for(int i = 0; i < NUMBER_OF_BODIES; i++)
 	{
-		BodyRadius[i] = (diameterOfCeres*cbrt(BodyMass[i]/massOfCeres))/2; // km
-		sumOfRadii += BodyRadius[i];
+		// Calculate the radius of each body based on their mass
+		BodyRadius[i] = diameterOfCeres*cbrt(BodyMass[i]/massOfCeres)/2.0; //km
+		// Add up each radius so we can find the average
+		sumRadii += BodyRadius[i]; //km
+	}
+	// ??? Set you mass unit
+	MassUnitConverter = sumMass/NUMBER_OF_BODIES; // kg
+	// Set your length unit
+	//LengthUnitConverter = pow((massOfCeres*6.0/(PI*NUMBER_OF_BODIES*densityOfCeres)),1.0/3.0); // km
+	LengthUnitConverter = 2.0*sumRadii/NUMBER_OF_BODIES; // km
+	TimeUnitConverter = sqrt(LengthUnitConverter*LengthUnitConverter*LengthUnitConverter/(G*MassUnitConverter)); // hr
+
+	for(int i = 0; i < NUMBER_OF_BODIES; i++)
+	{
+		// Convert each mass from kg to SMU
+		BodyMass[i] /= MassUnitConverter; //kg -> SMU
+		// Convert each radius from km to SLU
+		BodyRadius[i] /= LengthUnitConverter; // km -> SLU
 	}
 	
-	// Set your length unit
-	LengthUnitConverter = sumOfRadii/NUMBER_OF_BODIES; // km
-	TimeUnitConverter = sqrt(LengthUnitConverter*LengthUnitConverter*LengthUnitConverter/(G*MassUnitConverter)); // hr
+	//find the smallest radius
+	minRadius = BodyRadius[0];
+	minIndex = 0;
+
+	for(int i = 1; i < NUMBER_OF_BODIES; i++)
+	{
+		if(BodyRadius[i] < minRadius)
+		{
+			minRadius = BodyRadius[i];
+			minIndex = i;
+		}
+	}
 	
 	printf("\n MassUnitConverter = %e kilograms", MassUnitConverter);
 	printf("\n LengthUnitConverter = %e kilometers", LengthUnitConverter);
 	printf("\n TimeUnitConverter = %e hours", TimeUnitConverter);
 	
-
-
 	// If we did everthing right the universal gravity constant should be 1.
-	GavityConstant = 1.0;
-	printf("\n The gavity constant = %f in our units", GavityConstant);
+	GravityConstant = 5.0;
+	printf("\n The gravity constant = %f in our units", GravityConstant);
 	
-	// All spheres are the same diameter and mass so these should be 1. Noy true
-	// ??? don't need these.They will be close to one but not exactly one anymore.
-	// Also you will just need to replace all these in the code with your new ones.
-	// Have fun finding them all!!!
-	//SphereDiameter = 1.0;
-	//SphereMass = 1.0;
-
-	//now make the values almost 1 for the sphere mass and radius
-	for(int i = 0; i < NUMBER_OF_BODIES; i++)
-	{
-		BodyRadius[i] /= LengthUnitConverter;
-		BodyMass[i] /= MassUnitConverter;
-
-		printf("\n Body %d has a mass of %f kilograms and a radius of %f kilometers", i, BodyMass[i], BodyRadius[i]);	
-	}
-
+	
 	// Making the size of the intial globe we use to place the bodies.
-	globeSize = 20.0;
+	globeSize = 10.0;
 	
 	// You get to pick this but it is nice to print it out in common units to get a feel for what it is.
-	MaxVelocity = 10.0;
+	MaxVelocity = 5.0;
 	printf("\n Max velocity = %f kilometers/hour or %f miles/hour", MaxVelocity*LengthUnitConverter/TimeUnitConverter, (MaxVelocity*LengthUnitConverter/TimeUnitConverter)*0.621371);
 	
-
-
 	for(int i = 0; i < NUMBER_OF_BODIES; i++)
 	{
 		// Settting the balls randomly in a large sphere and not letting them be right on top of each other.
@@ -306,8 +306,8 @@ void setInitailConditions()
 			test = 1;
 			for(int j = 0; j < i; j++)
 			{
-				seperation = sqrt((Position[j].x-Position[i].x)*(Position[j].x-Position[i].x) + (Position[j].y-Position[i].y)*(Position[j].y-Position[i].y) + (Position[j].z-Position[i].z)*(Position[j].z-Position[i].z));
-				if(seperation < BodyRadius[i] + BodyRadius[j])
+				seperation = sqrt((Position[i].x-Position[j].x)*(Position[i].x-Position[j].x) + (Position[i].y-Position[j].y)*(Position[i].y-Position[j].y) + (Position[i].z-Position[j].z)*(Position[i].z-Position[j].z));
+				if(seperation < BodyRadius[i]+BodyRadius[j])
 				{
 					test = 0;
 					break;
@@ -321,9 +321,9 @@ void setInitailConditions()
 		Velocity[i].z = (((float)rand()/(float)RAND_MAX)*2.0 - 1.0)*MaxVelocity;
 		
 		// Color of each asteroid. 
-		Color[i].x = ((float)rand()/(float)RAND_MAX);
-		Color[i].y = ((float)rand()/(float)RAND_MAX);
-		Color[i].z = ((float)rand()/(float)RAND_MAX);
+		Color[i].x = 0.35;
+		Color[i].y = 0.22;
+		Color[i].z = 0.16;
 		
 		Force[i].x = 0.0;
 		Force[i].y = 0.0;
@@ -356,21 +356,18 @@ void drawPicture()
 			glutSolidSphere(BodyRadius[i], 30, 30);
 		glPopMatrix();
 	}
+
+	//draw the smallest body with a random color every frame
+	
+	Color[minIndex].x = ((float)rand()/(float)RAND_MAX);
+	Color[minIndex].y = ((float)rand()/(float)RAND_MAX);
+	Color[minIndex].z = ((float)rand()/(float)RAND_MAX);
+
+	glColor3d(Color[minIndex].x, Color[minIndex].y, Color[minIndex].z);
 	
 	// Drawing the wall.
-	int temp;
+	glColor3d(1.0, 1.0, 0.75);
 	glBegin(GL_QUADS);
-		temp = WallCount%511;
-		if(temp <= 255)
-		{
-			glColor3d((float)temp/255.0, 0.0, 0.0);
-		}
-		else 
-		{
-			temp = 256 - temp%255;
-			//glColor3d((float)temp/255.0, (float)temp/255.0, (float)temp/255.0);
-			glColor3d((float)temp/255.0, 0.0, 0.0);
-		}
 		glVertex3f(25.0, -5.0, 5.0);
 		glVertex3f(25.0, -5.0, -5.0);
 		glVertex3f(25.0, 5.0, -5.0);
@@ -456,12 +453,13 @@ void zeroOutSystem()
 
 void getForces()
 {
-	float inOut = 0.0f;
+	float inOut;
 	float kSphere,kSphereReduction;
 	float kWall, kWallReduction;
 	float4 d, unit, dv;
 	float magnitude;
 	float intersectionArea; 
+	// float sphereRadius = SphereDiameter/2.0;
 	
 	// Zeroing forces outside of the force loop just to be safe.
 	for(int i = 0; i < NUMBER_OF_BODIES; i++)
@@ -473,11 +471,11 @@ void getForces()
 	
 	kWall = 20000.0;
 	kWallReduction = 0.2;
-	kSphere = 50000.0;
+	kSphere = 10000.0;
 	kSphereReduction = 0.5;
 	for(int i = 0; i < NUMBER_OF_BODIES; i++)
-	{
-		if(25.0 < Position[i].x + BodyRadius[i] && Position[i].x + BodyRadius[i] < 26.0)
+	{	
+		if(25.0 < Position[i].x + BodyRadius[i] && Position[i].x + BodyRadius[i] < 25.25)
 		{
 			if(-5.0 < Position[i].y && Position[i].y < 5.0 && -5.0 < Position[i].z && Position[i].z < 5.0)
 			{
@@ -506,35 +504,37 @@ void getForces()
 			unit.z = d.z/d.w;
 			
 			// Nonelastic sphere collisions 
-			if(d.w < BodyRadius[i] + BodyRadius[j])
+			if(d.w < BodyRadius[i]+BodyRadius[j])
 			{
 				// If the seperation gets too small the sphers may go through each other.
 				// If you are ok with that you do not need this line.
-				if(d.w < (BodyRadius[i]+BodyRadius[j])/10.0)
+				if(d.w < (BodyRadius[i]+BodyRadius[j])/20.0)
 				{
 					printf("\n Spheres %d and %d got to close. Make your sphere repultion stronger\n", i, j);
 					exit(0);
 				}
 				
-				float r1 = BodyRadius[i];
-				float r2 = BodyRadius[j];
-
-				float term1 = r2 * r2;
-				float term2 = pow(((r1 * r1 - r2 * r2 - d.w * d.w) / (-2 * d.w)), 2);
-				//printf("term1: %f, term2: %f\n", term1, term2);
-
-				intersectionArea = PI * (term1 - term2);
-				//printf("intersectionArea: %f\n", intersectionArea);
+				float x = (BodyRadius[j]*BodyRadius[j] - BodyRadius[i]*BodyRadius[i] + d.w*d.w)/(2*d.w);
+				if(x < 0.0)
+				{
+					float maxRadius = BodyRadius[i] > BodyRadius[j] ? BodyRadius[i] : BodyRadius[j];
+					intersectionArea = PI*(maxRadius*maxRadius - d.w*d.w);
+					// increase k proportional to the distance between centers -> smaller distance = greater force
+				}
+				else
+				{
+					intersectionArea = PI*(BodyRadius[j]*BodyRadius[j] - x*x);
+				}
 
 				dv.x = Velocity[j].x - Velocity[i].x;
-				dv.y = Velocity[j].y - Velocity[i].y;
+				dv.y = Velocity[j].y - Velocity[i].y; 
 				dv.z = Velocity[j].z - Velocity[i].z;
 				inOut = d.x*dv.x + d.y*dv.y + d.z*dv.z;
 				if(inOut < 0.0) magnitude = kSphere*intersectionArea; // If inOut is negative the sphere are converging.
 				else magnitude = kSphereReduction*kSphere*intersectionArea; // If inOut is positive the sphere are diverging.
 				
-				//if(inOut < 0.0) magnitude = kSphere*(BodyRadius[i] + BodyRadius[j] - d.w); // If inOut is negative the sphere are converging.
-				//else magnitude = kSphereReduction*kSphere*(BodyRadius[i] + BodyRadius[j] - d.w); // If inOut is positive the sphere are diverging.
+				//if(inOut < 0.0) magnitude = kSphere*(SphereDiameter - d.w); // If inOut is negative the sphere are converging.
+				//else magnitude = kSphereReduction*kSphere*(SphereDiameter - d.w); // If inOut is positive the sphere are diverging.
 				
 				// Doling out the force in the proper perfortions using unit vectors.
 				Force[i].x -= magnitude*unit.x;
@@ -547,7 +547,7 @@ void getForces()
 				
 				// This adds the gravity between asteroids but the gravity is lock in at what it 
 				// was at impact.
-				magnitude = GavityConstant*BodyMass[j]*BodyMass[i]/((BodyRadius[i] + BodyRadius[j])*(BodyRadius[i] + BodyRadius[j]));
+				magnitude = GravityConstant*BodyMass[i]*BodyMass[j]/((BodyRadius[i]+BodyRadius[j])*(BodyRadius[i]+BodyRadius[j]));
 				Force[i].x += magnitude*unit.x;
 				Force[i].y += magnitude*unit.y;
 				Force[i].z += magnitude*unit.z;
@@ -559,7 +559,7 @@ void getForces()
 			else
 			{
 				// This adds the gravity between asteroids when they are not touching.
-				magnitude = GavityConstant*(BodyMass[i]*BodyMass[j])/((BodyRadius[i] + BodyRadius[j])*(BodyRadius[i] + BodyRadius[j]));
+				magnitude = GravityConstant*BodyMass[i]*BodyMass[j]/(d.w*d.w);
 				Force[i].x += magnitude*unit.x;
 				Force[i].y += magnitude*unit.y;
 				Force[i].z += magnitude*unit.z;
@@ -652,8 +652,8 @@ void terminalPrint()
 	system("clear");
 	
 	printf("\n");
-	printf("\n a/d: Move Right move left");
-	printf("\n w/s: Move Up move down");
+	printf("\n X/x: Move Right move left");
+	printf("\n Y/y: Move Up move down");
 	printf("\n Z/z: Move in move out");
 	
 	printf("\n");
@@ -692,7 +692,19 @@ void terminalPrint()
 	printf("\n\n Time = %f \033[0;34mhours", RunTime*TimeUnitConverter);
 	printf("\033[0m");
 	printf("\n");
+
+	//print the smallest body radius, mass, force.x .y .z, and velocity.x .y .z each on a new line
+	printf("\n Smallest Body Radius: %f", BodyRadius[minIndex]);
+	printf("\n Smallest Body Mass: %f", BodyMass[minIndex]);
+	printf("\n Smallest Body Force: x: %f, y: %f, z: %f", Force[minIndex].x, Force[minIndex].y, Force[minIndex].z);
+	printf("\n Smallest Body Velocity: x: %f, y: %f, z: %f", Velocity[minIndex].x, Velocity[minIndex].y, Velocity[minIndex].z);
+	printf("\n Smallest Body Position: x: %f, y: %f, z: %f", Position[minIndex].x, Position[minIndex].y, Position[minIndex].z);
+
+
+	printf("\n");
+
 }
+
 
 int main(int argc, char** argv)
 {
@@ -703,7 +715,7 @@ int main(int argc, char** argv)
 
 	// Clip plains
 	Near = 0.2;
-	Far = 5000.0;
+	Far = 50.0;
 
 	//Where your eye is located
 	EyeX = 0.0;
