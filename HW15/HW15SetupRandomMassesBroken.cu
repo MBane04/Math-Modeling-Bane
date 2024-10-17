@@ -275,7 +275,7 @@ void setInitailConditions()
 		BodyRadius[i] /= LengthUnitConverter;
 		BodyMass[i] /= MassUnitConverter;
 
-		printf("\n Body %d has a mass of %e kilograms and a radius of %f kilometers", i, BodyMass[i], BodyRadius[i]);	
+		printf("\n Body %d has a mass of %f kilograms and a radius of %f kilometers", i, BodyMass[i], BodyRadius[i]);	
 	}
 
 	// Making the size of the intial globe we use to place the bodies.
@@ -456,7 +456,7 @@ void zeroOutSystem()
 
 void getForces()
 {
-	float inOut;
+	float inOut = 0.0f;
 	float kSphere,kSphereReduction;
 	float kWall, kWallReduction;
 	float4 d, unit, dv;
@@ -473,7 +473,7 @@ void getForces()
 	
 	kWall = 20000.0;
 	kWallReduction = 0.2;
-	kSphere = 50000.0;
+	kSphere = 10000.0;
 	kSphereReduction = 0.5;
 	for(int i = 0; i < NUMBER_OF_BODIES; i++)
 	{
@@ -516,8 +516,11 @@ void getForces()
 					exit(0);
 				}
 				
-				intersectionArea = (PI/4.0)*(((BodyRadius[i] + BodyRadius[j])*(BodyRadius[i] + BodyRadius[j])) - d.w*d.w);
-				
+				float r1 = BodyRadius[i];
+				float r2 = BodyRadius[j];
+				float diameter = BodyRadius[i] + BodyRadius[j];
+				intersectionArea = PI * (r2*r2 - pow(((r1*r1 - r2*r2 - diameter*diameter)/(-2*diameter))),2));
+
 				dv.x = Velocity[j].x - Velocity[i].x;
 				dv.y = Velocity[j].y - Velocity[i].y;
 				dv.z = Velocity[j].z - Velocity[i].z;
@@ -539,7 +542,7 @@ void getForces()
 				
 				// This adds the gravity between asteroids but the gravity is lock in at what it 
 				// was at impact.
-				magnitude = GavityConstant*(BodyMass[i]*BodyMass[j])/((BodyRadius[i] + BodyRadius[j])*(BodyRadius[i] + BodyRadius[j]));
+				magnitude = GavityConstant*(BodyMass[i]+BodyMass[j])*(BodyMass[i]+BodyMass[j])/((BodyRadius[i] + BodyRadius[j])*(BodyRadius[i] + BodyRadius[j]));
 				Force[i].x += magnitude*unit.x;
 				Force[i].y += magnitude*unit.y;
 				Force[i].z += magnitude*unit.z;
@@ -551,7 +554,7 @@ void getForces()
 			else
 			{
 				// This adds the gravity between asteroids when they are not touching.
-				magnitude = GavityConstant*(BodyMass[i]*BodyMass[j])/(d.w*d.w);
+				magnitude = GavityConstant*(BodyMass[i] + BodyMass[j])*(BodyMass[i] + BodyMass[j])/(d.w*d.w);
 				Force[i].x += magnitude*unit.x;
 				Force[i].y += magnitude*unit.y;
 				Force[i].z += magnitude*unit.z;
