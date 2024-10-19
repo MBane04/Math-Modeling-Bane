@@ -15,7 +15,7 @@
 #include <curand_kernel.h>
 
 #define NUMBER_OF_BODIES 95
-#define PI 3.14159
+#define PI 3.141592653
 using namespace std;
 
 float TotalRunTime;
@@ -27,6 +27,7 @@ float BodyMass[NUMBER_OF_BODIES], BodyRadius[NUMBER_OF_BODIES];
 
 float minRadius = BodyRadius[0]; //to keep track of the smallest body how it's behaving
 int minIndex = 0;
+float4 MaxForce = {0.0, 0.0, 0.0, 0.0};
 
 float MaxVelocity;
 int Trace;
@@ -276,9 +277,8 @@ void setInitailConditions()
 	printf("\n TimeUnitConverter = %e hours", TimeUnitConverter);
 	
 	// If we did everthing right the universal gravity constant should be 1.
-	GravityConstant = 5.0;
+	GravityConstant = 10.0;
 	printf("\n The gravity constant = %f in our units", GravityConstant);
-	
 	
 	// Making the size of the intial globe we use to place the bodies.
 	globeSize = 10.0;
@@ -289,7 +289,7 @@ void setInitailConditions()
 	
 	for(int i = 0; i < NUMBER_OF_BODIES; i++)
 	{
-		// Settting the balls randomly in a large sphere and not letting them be right on top of each other.
+		// Setting the balls randomly in a large sphere and not letting them be right on top of each other.
 		test = 0;
 		while(test == 0)
 		{
@@ -515,6 +515,10 @@ void getForces()
 				}
 				
 				float x = (BodyRadius[j]*BodyRadius[j] - BodyRadius[i]*BodyRadius[i] + d.w*d.w)/(2*d.w);
+
+				intersectionArea = PI*(BodyRadius[i]*BodyRadius[i] - x*x);
+
+				
 				if(x < 0.0)
 				{
 					float maxRadius = BodyRadius[i] > BodyRadius[j] ? BodyRadius[i] : BodyRadius[j];
@@ -525,11 +529,19 @@ void getForces()
 				{
 					intersectionArea = PI*(BodyRadius[j]*BodyRadius[j] - x*x);
 				}
+				
 
 				dv.x = Velocity[j].x - Velocity[i].x;
 				dv.y = Velocity[j].y - Velocity[i].y; 
 				dv.z = Velocity[j].z - Velocity[i].z;
 				inOut = d.x*dv.x + d.y*dv.y + d.z*dv.z;
+				//dampen based on radius if the sphere is less than 1
+				
+				//if(BodyRadius[i] < 1.0 || BodyRadius[j] < 1.0) kSphere = BodyRadius[i] < BodyRadius[j] ? 10000 * BodyRadius[i] : 10000 * BodyRadius[j];
+				//else kSphere = 10000.0;
+
+				kSphere = 5000.0*(BodyMass[i] + BodyMass[j]);
+
 				if(inOut < 0.0) magnitude = kSphere*intersectionArea; // If inOut is negative the sphere are converging.
 				else magnitude = kSphereReduction*kSphere*intersectionArea; // If inOut is positive the sphere are diverging.
 				
@@ -569,6 +581,18 @@ void getForces()
 				Force[j].z -= magnitude*unit.z;
 			}
 		}
+	}
+	if(fabs(Force[minIndex].x) > MaxForce.x)
+	{
+		MaxForce.x = Force[minIndex].x;
+	}
+	if(fabs(Force[minIndex].y) > MaxForce.y)
+	{
+		MaxForce.y = Force[minIndex].y;
+	}
+	if(fabs(Force[minIndex].z) > MaxForce.z)
+	{
+		MaxForce.z = Force[minIndex].z;
 	}
 }
 
@@ -699,7 +723,7 @@ void terminalPrint()
 	printf("\n Smallest Body Force: x: %f, y: %f, z: %f", Force[minIndex].x, Force[minIndex].y, Force[minIndex].z);
 	printf("\n Smallest Body Velocity: x: %f, y: %f, z: %f", Velocity[minIndex].x, Velocity[minIndex].y, Velocity[minIndex].z);
 	printf("\n Smallest Body Position: x: %f, y: %f, z: %f", Position[minIndex].x, Position[minIndex].y, Position[minIndex].z);
-
+	printf("\n Smallest Body Maximum Force: x: %f, y: %f, z: %f", MaxForce.x, MaxForce.y, MaxForce.z);
 
 	printf("\n");
 
