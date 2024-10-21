@@ -1,4 +1,4 @@
 # compiles and runs the current homework
-nvcc HW16/HW16FixForceFunction.cu -o HW16/bounce -lglut -lm -lGLU -lGL
+nvcc HW17/HW17FixForceFunction.cu -o HW17/bounce -lglut -lm -lGLU -lGL
 
-./HW16/bounce
+./HW17/bounce

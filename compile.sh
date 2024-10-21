@@ -1,1 +1,1 @@
-nvcc HW16/HW16FixForceFunction.cu -o HW16/bounce -lglut -lm -lGLU -lGL
+nvcc HW17/HW17FixForceFunction.cu -o HW16/bounce -lglut -lm -lGLU -lGL
