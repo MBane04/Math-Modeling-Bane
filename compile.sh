@@ -1,1 +1,1 @@
-nvcc HW17/HW17FixForceFunction.cu -o HW16/bounce -lglut -lm -lGLU -lGL
+nvcc HW18/HW18SetupRandomMassesBroken.cu -o HW18/bounce -lglut -lm -lGLU -lGL
