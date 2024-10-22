@@ -513,22 +513,18 @@ void getForces()
 					printf("\n Spheres %d and %d got to close. Make your sphere repultion stronger\n", i, j);
 					exit(0);
 				}
-				float maxRadius = BodyRadius[i] > BodyRadius[j] ? BodyRadius[i] : BodyRadius[j];
-				float minRadius = BodyRadius[i] <= BodyRadius[j] ? BodyRadius[i] : BodyRadius[j];
+				float maxRadius = fmax(BodyRadius[i], BodyRadius[j]);
+				float minRadius = fmin(BodyRadius[i], BodyRadius[j]);
 
 				float x = (d.w*d.w - maxRadius*maxRadius + minRadius*minRadius)/(2*d.w);
-				float squareRadius = BodyRadius[j]*BodyRadius[j] - x*x;
 
 				if (x < 0.0)
 				{
-					squareRadius = minRadius*minRadius;
 					intersectionArea = PI*minRadius*minRadius;
 				}
 				else 
 				{
-					squareRadius = minRadius*minRadius - x*x;
 					intersectionArea = PI*(minRadius*minRadius - x*x);
-					//exit(0);
 				}
 				/*
 				float x = (maxRadius*maxRadius - minRadius*minRadius + d.w*d.w)/(2*d.w);
@@ -544,6 +540,7 @@ void getForces()
 				}
 					*/
 				// DO NOT UNCOMMENT!!!!! MAKES BALLS WANT TO SOCIAL DISTANCE, ITS 2024 GOSHDANGIT
+				// jk, Saul good man
 				// float s = (BodyRadius[i] + BodyRadius[j] + d.w)/2.0;
 				// intersectionArea = PI*sqrt((s-d.w)*(s-BodyRadius[i])*(s-BodyRadius[j])*s);
 
