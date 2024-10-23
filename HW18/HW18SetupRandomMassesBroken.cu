@@ -1,4 +1,4 @@
-//nvcc SetupRandomMassesFixed.cu -o bounce -lglut -lm -lGLU -lGL																													
+//nvcc -diag-suppress=177 HW18SetupRandomMassesBroken.cu -o bounce -lglut -lm -lGLU -lGL																											
 //To stop hit "control c" in the window you launched it from.
 #include <iostream>
 #include <fstream>
