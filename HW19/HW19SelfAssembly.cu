@@ -14,7 +14,7 @@
 #include <curand.h>
 #include <curand_kernel.h>
 
-#define NUMBER_OF_BODIES 500
+#define NUMBER_OF_BODIES 6
 #define PI 3.14159
 using namespace std;
 
@@ -85,23 +85,6 @@ void reshape(int w, int h)
 
 void KeyPressed(unsigned char key, int x, int y)
 {
-	if(key == 'g')
-	{
-		Pause = 1;
-		terminalPrint();
-		zeroOutSystem();
-		
-		for(int i = 0; i < NUMBER_OF_BODIES; i++)
-		{
-			Velocity[i].x += 20.0;
-			Velocity[i].y += 0.0;
-			Velocity[i].z += 0.0;
-		}
-		drawPicture();
-		printf("\n Asteroids are ready to go.");
-		printf("\n Press 'p' to hire them into the wall with a velocity of %f kilometers per hour.\n", 20.0*LengthUnitConverter/TimeUnitConverter);
-	}
-	
 	if(key == 'k')
 	{
 		Pause = 1;
@@ -193,10 +176,10 @@ void setInitailConditions()
 	int test;
 	int tryCount;
 	float globeSize, angle1, angle2, radius;
-	double massOfCeres;
-	double diameterOfCeres;
-	double densityOfCeres;
-	double volumeOfCeres;
+	double polyMass;
+	double polyDiameter;
+	double polyDensity;
+	double polyVolume;
 	double G = (8.649828e-13); //km^3/kg*hr^2
 	
 	// Seeding the random number generater.
@@ -208,57 +191,63 @@ void setInitailConditions()
 	// hours (hr)
 	// If you multiply one of our units by this number it will convert it the outside world units.
 	// If you divide an outside world unit by this number it will convert it to our units
-	// We are setting the mass unit to be the mass of Ceres.
-	// We are settting the length unit to be th diameter of Ceres.
+	// We are setting the mass unit to be the mass of Polystyrene.
+	// We are settting the length unit to be th diameter of Polystyrene.
 	// We are setting the time unit to be the such that the universal gravity constant is 1.
 	
-	massOfCeres = 9.383e20; // kg
-	diameterOfCeres = 940.0; // km
-	densityOfCeres = massOfCeres/((PI/6.0)*diameterOfCeres*diameterOfCeres*diameterOfCeres); // kg/km^3
-	volumeOfCeres = (PI/6.0)*diameterOfCeres*diameterOfCeres*diameterOfCeres;
+	polyDiameter = 1; // um
+	polyDensity = 1.05; //pg/um^3
+	polyVolume = (PI/6.0)*polyDiameter*polyDiameter*polyDiameter;
+	polyMass = polyDensity*polyVolume; //pg
 	
-	printf("\n Mass of Ceres = %e kilograms", massOfCeres);
-	printf("\n Diameter of Ceres = %e kilometers", diameterOfCeres);
-	printf("\n Density of Ceres = %e kilograms/kilometer^3", densityOfCeres);
-	printf("\n Volume of Ceres = %e kilometers^3", volumeOfCeres);
+	printf("\n Mass of Polystyrene = %e kilograms", polyMass);
+	printf("\n Diameter of Polystyrene = %e kilometers", polyDiameter);
+	printf("\n Density of Polystyrene = %e kilograms/kilometer^3", polyDensity);
+	printf("\n Volume of Polystyrene = %e kilometers^3", polyVolume);
 	printf("\n");
 	
+	/*
 	double totalMass = 0.0;
 	for(int i = 0; i < NUMBER_OF_BODIES; i++)
 	{
-		BodyMass[i] = ((float)rand()/(float)RAND_MAX);
-		totalMass += BodyMass[i];
+		// BodyMass[i] = ((float)rand()/(float)RAND_MAX);
+		// totalMass += BodyMass[i];
 	}
+	*/
 	
 	for(int i = 0; i < NUMBER_OF_BODIES; i++)
 	{
-		BodyMass[i] = massOfCeres*(BodyMass[i]/totalMass);
+		// BodyMass[i] = polyMass*(BodyMass[i]/totalMass);
 		//printf("\n Mass %d = %e", i, BodyMass[i]);
+
+		BodyMass[i] = polyMass;
 	}
 	
 	double volume;
 	for(int i = 0; i < NUMBER_OF_BODIES; i++)
 	{
-		volume = volumeOfCeres*(BodyMass[i]/massOfCeres);
-		BodyRadius[i] = pow(3.0*volume/(4.0*PI), 1.0/3.0);
+		//volume = polyVolume*(BodyMass[i]/polyMass);
+		//BodyRadius[i] = pow(3.0*volume/(4.0*PI), 1.0/3.0);
+
+		BodyRadius[i] = polyDiameter/2.0;
 	}
 	
 	// Check
-	double tempMass = 0.0;
-	double tempVolume = 0.0;
-	for(int i = 0; i < NUMBER_OF_BODIES; i++)
-	{
-		tempMass += BodyMass[i];
-		tempVolume += (4.0*PI/3.0)*BodyRadius[i]*BodyRadius[i]*BodyRadius[i];
-	}
-	printf("\n check Total mass = %e kilograms", tempMass);
-	printf("\n check Total volume = %e kilometers", tempVolume);
-	printf("\n");
+	// double tempMass = 0.0;
+	// double tempVolume = 0.0;
+	// for(int i = 0; i < NUMBER_OF_BODIES; i++)
+	// {
+	// 	tempMass += BodyMass[i];
+	// 	tempVolume += (4.0*PI/3.0)*BodyRadius[i]*BodyRadius[i]*BodyRadius[i];
+	// }
+	// printf("\n check Total mass = %e kilograms", tempMass);
+	// printf("\n check Total volume = %e kilometers", tempVolume);
+	// printf("\n");
 	
 	
-	MassUnitConverter = massOfCeres/NUMBER_OF_BODIES; // kg
-	LengthUnitConverter = pow(6.0*(volumeOfCeres/NUMBER_OF_BODIES)/PI,1.0/3.0); // km
-	TimeUnitConverter = sqrt(LengthUnitConverter*LengthUnitConverter*LengthUnitConverter/(G*MassUnitConverter)); // hr
+	MassUnitConverter = polyMass; // pg
+	LengthUnitConverter = polyDiameter; // ug
+	TimeUnitConverter = 10e-4; // hr
 	
 	printf("\n MassUnitConverter = %e kilograms", MassUnitConverter);
 	printf("\n LengthUnitConverter = %e kilometers", LengthUnitConverter);
@@ -269,11 +258,13 @@ void setInitailConditions()
 	{
 		BodyMass[i] /= MassUnitConverter;
 		BodyRadius[i] /= LengthUnitConverter;
+		printf("\n Mass %d = %f", i, BodyMass[i]);
+		printf("\n Radius %d = %f", i, BodyRadius[i]);
 	}
 	
 	// If we did everthing right the universal gravity constant should be 1.
 	GavityConstant = 1.0;
-	printf("\n The gavity constant = %f in our units", GavityConstant);
+	printf("\n The Boltzmann's constant = %f in our units", GavityConstant);
 	
 	// All spheres are the same diameter and mass so these should be 1..
 	
@@ -367,23 +358,6 @@ void drawPicture()
 		glPopMatrix();
 	}
 	
-	// Drawing the wall.
-	glColor3d(1.0, 1.0, 0.75);
-	glBegin(GL_QUADS);
-		glVertex3f(25.0, -5.0, 5.0);
-		glVertex3f(25.0, -5.0, -5.0);
-		glVertex3f(25.0, 5.0, -5.0);
-		glVertex3f(25.0, 5.0, 5.0);
-		glVertex3f(25.0, -5.0, 5.0);
-	glEnd();
-	WallCount++;
-	
-	glColor3d(1.0, 0.0, 0.0);
-	glPointSize(10.0f);
-	glBegin(GL_POINTS);
-		glVertex3f(25.0f, 0.0f, 0.0f);
-	glEnd();
-	
 	glutSwapBuffers();
 }
 
@@ -399,7 +373,7 @@ float4 centerOfMass()
 	
 	for(int i = 0; i < NUMBER_OF_BODIES; i++)
 	{
-    		centerOfMass.x += Position[i].x*BodyMass[i];
+    	centerOfMass.x += Position[i].x*BodyMass[i];
 		centerOfMass.y += Position[i].y*BodyMass[i];
 		centerOfMass.z += Position[i].z*BodyMass[i];
 		totalMass += BodyMass[i];
@@ -472,29 +446,10 @@ void getForces()
 		Force[i].z = 0.0;
 	}
 	
-	kWall = 20000.0;
-	kWallReduction = 0.5;
 	kSphere = 1000.0;
 	kSphereReduction = 0.3;
 	for(int i = 0; i < NUMBER_OF_BODIES; i++)
-	{	
-		if(25.0 < Position[i].x + BodyRadius[i] && Position[i].x + BodyRadius[i] < 26.0)
-		{
-			if(-5.0 < Position[i].z && Position[i].z < 5.0 && -5.0 < Position[i].z && Position[i].z < 5.0)
-			{
-				if(0.0 < Velocity[i].x)
-				{
-					magnitude = (Position[i].x + BodyRadius[i] - 25.0)*kWall;
-				}
-				else
-				{
-					magnitude = (Position[i].x + BodyRadius[i] - 25.0)*kWall*kWallReduction;
-				}
-				Force[i].x -= magnitude;
-			}
-		}
-		
-		
+	{
 		// This adds forces between asteriods.
 		for(int j = 0; j < i; j++)
 		{
@@ -665,7 +620,6 @@ void terminalPrint()
 	printf("\n k: Will zero out the center of mass and linear velocity of the system.");
 	printf("\n 1: Will print the center of mass and the linear velocity of the system.");
 	printf("\n");
-	printf("\n g: Will center the asteroids then fire them into the wall on your comand.");
 	printf("\n");
 	printf("\033[0m");
 	printf("\n t: Trace on/off toggle --> ");
