@@ -1,4 +1,4 @@
 # compiles and runs the current homework
-nvcc -diag-suppress=177 HW18/HW18SetupRandomMassesBroken.cu -o HW18/bounce -lglut -lm -lGLU -lGL
+nvcc -diag-suppress=177 HW19/HW19SetupRandomMassesBroken.cu -o HW19/bounce -lglut -lm -lGLU -lGL
 
-./HW18/bounce
+./HW19/bounce
