@@ -1,4 +1,4 @@
 # compiles and runs the current homework
 nvcc HW21/HW21SelfAssemblyCount.cu -o HW21/bounce2 -lglut -lm -lGLU -lGL
 
-./HW21/bounce
+./HW21/bounce2

@@ -1,4 +1,4 @@
-//nvcc SelfAssemblyCount.cu -o bounce2 -lglut -lm -lGLU -lGL																													
+//nvcc HW21SelfAssemblyCount.cu -o bounce2 -lglut -lm -lGLU -lGL																													
 //To stop hit "control c" in the window you launched it from.
 #include <iostream>
 #include <fstream>
@@ -576,13 +576,13 @@ void nBody()
 			if(16.8 < newTotalBodyDistance && newTotalBodyDistance < 17.2) PolyCount++;
 			else if(16.0 < newTotalBodyDistance && newTotalBodyDistance < 16.4) OctCount++;
 			else OtherCount++;
-			if(OctCount != 0)
+			if (OctCount) //changed from Octcount != 0, since its the same thing
 			{
-				printf("\n %d: %d, %d, %d Ratio = %f -- Distance = %f \n", Iteration, PolyCount, OctCount, OtherCount, (float)PolyCount/(float)OctCount, newTotalBodyDistance);
+				printf("\n Iteration %d: PolyCount = %d, OctCount = %d, OtherCount = %d, Ratio = %f, TotalBodyDistance = %f \n", Iteration, PolyCount, OctCount, OtherCount, (float)PolyCount/(float)OctCount, newTotalBodyDistance);
 			}
 			else
 			{
-				printf("\n %d: %d, %d, %d -- Distance = %f \n", Iteration, PolyCount, OctCount, OtherCount, newTotalBodyDistance);
+				printf("\n Iteration %d: PolyCount = %d, OctCount = %d, OtherCount = %d, TotalBodyDistance = %f \n", Iteration, PolyCount, OctCount, OtherCount, newTotalBodyDistance);
 			}
 			TotalBodyDistance = 0.0;
 			drawPicture();
@@ -644,7 +644,7 @@ void startMeUp()
 	// Choose different central force strengths (should be grounded to the depletion force) and damping 
 	// to see if you can find break points in the ratio of oct to poly.
 	// Should run for a few hundred interations. Maybe a 1000.
-	CentralForce = -0.1*DepletionForce;
+	CentralForce = -0.001*DepletionForce; //regulates from around 0.5 to 0.7
 	Damp = 0.1;
 	
 	SetupMaxVelocity = 1.1;

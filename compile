@@ -1,1 +1,1 @@
-nvcc HW21/HW21SelfAssembly.cu -o HW21/bounce -lglut -lm -lGLU -lGL
+nvcc HW21/HW21SelfAssemblyCount.cu -o HW21/bounce2 -lglut -lm -lGLU -lGL
