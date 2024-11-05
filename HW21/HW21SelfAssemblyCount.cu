@@ -644,7 +644,7 @@ void startMeUp()
 	// Choose different central force strengths (should be grounded to the depletion force) and damping 
 	// to see if you can find break points in the ratio of oct to poly.
 	// Should run for a few hundred interations. Maybe a 1000.
-	CentralForce = -0.001*DepletionForce; //regulates from around 0.5 to 0.7
+	CentralForce = -0.04*DepletionForce; //regulates from around 0.5 to 0.7
 	Damp = 0.1;
 	
 	SetupMaxVelocity = 1.1;
