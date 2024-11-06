@@ -103,10 +103,6 @@ void set_initail_conditions()
 	CompressionStrength[2][4] = 10.0;
 	TensionStrength[2][4] = 10.0;
 	NaturalLength[2][4] = 2.0;
-
-	CompressionStrength[3][4] = 10.0;
-	TensionStrength[3][4] = 10.0;
-	NaturalLength[3][4] = 2.0;
 	
 	//Setting node positions
 	Px[0] = 0.0;
@@ -127,7 +123,7 @@ void set_initail_conditions()
 
 	//make it into a polytetrahedron
 	Px[4] = 0.0;
-	Py[4] = 0.0 + DROP_HIEGHT;
+	Py[4] = -1.0 + DROP_HIEGHT;
 	Pz[4] = 0.0;
 }
 
