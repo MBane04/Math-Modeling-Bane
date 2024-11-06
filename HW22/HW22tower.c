@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define N 4
+#define N 5
 
 #define XWindowSize 2500
 #define YWindowSize 2500
@@ -91,6 +91,22 @@ void set_initail_conditions()
 	CompressionStrength[2][3] = 10.0;
 	TensionStrength[2][3] = 10.0;
 	NaturalLength[2][3] = 2.0;
+
+	CompressionStrength[0][4] = 10.0;
+	TensionStrength[0][4] = 10.0;
+	NaturalLength[0][4] = 2.0;
+
+	CompressionStrength[1][4] = 10.0;
+	TensionStrength[1][4] = 10.0;
+	NaturalLength[1][4] = 2.0;
+
+	CompressionStrength[2][4] = 10.0;
+	TensionStrength[2][4] = 10.0;
+	NaturalLength[2][4] = 2.0;
+
+	CompressionStrength[3][4] = 10.0;
+	TensionStrength[3][4] = 10.0;
+	NaturalLength[3][4] = 2.0;
 	
 	//Setting node positions
 	Px[0] = 0.0;
@@ -108,6 +124,11 @@ void set_initail_conditions()
 	Px[3] = 0.0;
 	Py[3] = 1.0 + DROP_HIEGHT;
 	Pz[3] = 0.0;
+
+	//make it into a polytetrahedron
+	Px[4] = 0.0;
+	Py[4] = 0.0 + DROP_HIEGHT;
+	Pz[4] = 0.0;
 }
 
 void draw_picture()
@@ -121,10 +142,11 @@ void draw_picture()
 	//Drawing the nodes
 	for(i = 0; i < N; i++)
 	{
-		if(i == 0) glColor3d(1.0,1.0,1.0);
-		if(i == 1) glColor3d(0.0,1.0,0.0);
-		if(i == 2) glColor3d(1.0,0.0,0.0);
-		if(i == 3) glColor3d(1.0,0.0,1.0);
+		if(i == 0) glColor3d(1.0,1.0,1.0); // 0 =white
+		if(i == 1) glColor3d(0.0,1.0,0.0); //1 = green
+		if(i == 2) glColor3d(1.0,0.0,0.0); //2 = red
+		if(i == 3) glColor3d(1.0,0.0,1.0); //3 = purple
+		if(i == 4) glColor3d(0.0,0.0,1.0); //4 = blue
 		glPushMatrix();
 		glTranslatef(Px[i], Py[i], Pz[i]);
 		glutSolidSphere(SHERE_RADIUS,20,20);
@@ -161,8 +183,26 @@ void draw_picture()
 	glColor3d(Red[2][3],Green[2][3],Blue[2][3]);
 	glBegin(GL_LINE_STRIP);
 		glVertex3f(Px[2], Py[2], Pz[2]);   
-		glVertex3f(Px[3], Py[3], Pz[3]); 
+		glVertex3f(Px[3], Py[3], Pz[3]);
 	glEnd();
+
+	//connect red white and greem, nodes 0,1,2 to 4
+	glColor3d(Red[0][4],Green[0][4],Blue[0][4]);
+	glBegin(GL_LINE_STRIP);
+		glVertex3f(Px[0], Py[0], Pz[0]);   
+		glVertex3f(Px[4], Py[4], Pz[4]);
+	glEnd();
+	glColor3d(Red[1][4],Green[1][4],Blue[1][4]);
+	glBegin(GL_LINE_STRIP);
+		glVertex3f(Px[1], Py[1], Pz[1]);   
+		glVertex3f(Px[4], Py[4], Pz[4]);
+	glEnd();
+	glColor3d(Red[2][4],Green[2][4],Blue[2][4]);
+	glBegin(GL_LINE_STRIP);
+		glVertex3f(Px[2], Py[2], Pz[2]);   
+		glVertex3f(Px[4], Py[4], Pz[4]);
+	glEnd();
+	
 	
 	//Drawing the flooor
 	glLineWidth(1.0);
